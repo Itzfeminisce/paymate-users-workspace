@@ -13,6 +13,9 @@ import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import Transactions from "./pages/Transactions";
+import PaymentMethods from "./pages/PaymentMethods";
+import Appearance from "./pages/Appearance";
+import Messages from "./pages/Messages";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +34,9 @@ const App = () => (
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/transactions" element={<Transactions />} />
+            <Route path="/payment-methods" element={<PaymentMethods />} />
+            <Route path="/appearance" element={<Appearance />} />
+            <Route path="/messages" element={<Messages />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
