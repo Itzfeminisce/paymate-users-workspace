@@ -16,11 +16,19 @@ import Transactions from "./pages/Transactions";
 import PaymentMethods from "./pages/PaymentMethods";
 import Appearance from "./pages/Appearance";
 import Messages from "./pages/Messages";
+import { useEffect } from "react";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
+const App = () => {
+  const title = import.meta.env.VITE_APP_TITLE;
+
+  useEffect(()=>{
+    document.title = title;
+  }, [])
+
+  return (
+    <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
         <Toaster />
@@ -44,6 +52,7 @@ const App = () => (
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
-);
+  )
+}
 
 export default App;

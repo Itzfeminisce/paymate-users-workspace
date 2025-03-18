@@ -1,19 +1,16 @@
-
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
-
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import GlassCard from '@/components/ui/GlassCard';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
-import { cn } from '@/lib/utils';
 import { fadeUp } from '@/lib/animations';
 
 // Form schema for login
@@ -190,22 +187,22 @@ export function AuthForm({ type, redirectTo = '/' }: AuthFormProps) {
             {type === 'login' ? (
               <p className="text-center text-sm text-muted-foreground">
                 Don't have an account?{' '}
-                <a 
-                  href="/sign-up" 
+                <Link 
+                  to="/sign-up" 
                   className="font-medium text-primary underline-offset-4 hover:underline"
                 >
                   Sign Up
-                </a>
+                </Link>
               </p>
             ) : (
               <p className="text-center text-sm text-muted-foreground">
                 Already have an account?{' '}
-                <a 
-                  href="/sign-in" 
+                <Link 
+                  to="/sign-in" 
                   className="font-medium text-primary underline-offset-4 hover:underline"
                 >
                   Sign In
-                </a>
+                </Link>
               </p>
             )}
           </form>

@@ -11,6 +11,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { fadeUp, staggerContainer } from '@/lib/animations';
 import { ArrowLeft, Send, MessageCircle, Mail, Phone, Clock, User, CheckCircle } from 'lucide-react';
+import NavigateBack from '@/components/ui/navigate-back';
+import Sidebar from '@/components/layout/Sidebar';
+import Container from '@/components/layout/Container';
 
 // Define message types
 type Message = {
@@ -29,7 +32,7 @@ export default function Messages() {
   const [emailSubject, setEmailSubject] = useState('');
   const [emailMessage, setEmailMessage] = useState('');
   const [saveTicket, setSaveTicket] = useState(true);
-  
+
   // Mock conversation history
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -54,15 +57,15 @@ export default function Messages() {
       read: true,
     },
   ]);
-  
+
   // Redirect if not authenticated
   if (!isAuthenticated) {
     return <Navigate to="/sign-in" />;
   }
-  
+
   const handleSendMessage = () => {
     if (!newMessage.trim()) return;
-    
+
     // Add user message
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -71,10 +74,10 @@ export default function Messages() {
       timestamp: new Date(),
       read: true,
     };
-    
+
     setMessages(prev => [...prev, userMessage]);
     setNewMessage('');
-    
+
     // Simulate support response after delay
     setTimeout(() => {
       const supportMessage: Message = {
@@ -84,16 +87,16 @@ export default function Messages() {
         timestamp: new Date(),
         read: false,
       };
-      
+
       setMessages(prev => [...prev, supportMessage]);
-      
+
       toast({
         title: "New message received",
         description: "Support team has responded to your message.",
       });
     }, 2000);
   };
-  
+
   const handleSendEmail = () => {
     if (!emailSubject.trim() || !emailMessage.trim()) {
       toast({
@@ -103,246 +106,228 @@ export default function Messages() {
       });
       return;
     }
-    
+
     toast({
       title: "Email sent",
       description: "Your message has been sent to our support team.",
     });
-    
+
     // Clear form
     setEmailSubject('');
     setEmailMessage('');
   };
-  
+
   // Format timestamp
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
-  
+
   return (
-    <div className="min-h-screen bg-gray-50 pt-20 pb-16">
-      <div className="container mx-auto px-4">
-        <Link to="/dashboard" className="inline-flex items-center text-sm font-medium text-primary mb-6">
-          <ArrowLeft className="h-4 w-4 mr-1" />
-          Back to Dashboard
-        </Link>
-        
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          animate="visible"
-          className="space-y-8"
-        >
-          <motion.div variants={fadeUp}>
-            <h1 className="text-3xl font-bold">Support</h1>
-            <p className="text-muted-foreground mt-2">
-              Get help from our support team
-            </p>
-          </motion.div>
-          
-          <motion.div variants={fadeUp}>
-            <div className="flex space-x-4 mb-6">
-              <Button
-                variant={activeTab === 'chat' ? 'default' : 'outline'}
-                onClick={() => setActiveTab('chat')}
-                className="flex items-center"
-              >
-                <MessageCircle className="h-4 w-4 mr-2" />
-                Live Chat
-              </Button>
-              <Button
-                variant={activeTab === 'email' ? 'default' : 'outline'}
-                onClick={() => setActiveTab('email')}
-                className="flex items-center"
-              >
-                <Mail className="h-4 w-4 mr-2" />
-                Email Support
-              </Button>
-            </div>
-            
-            {activeTab === 'chat' ? (
-              <GlassCard className="p-0 overflow-hidden">
-                <div className="bg-primary/5 p-4 border-b flex items-center justify-between">
-                  <div className="flex items-center">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
-                      <User className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium">Support Agent</h3>
-                      <div className="flex items-center text-xs text-muted-foreground">
-                        <div className="h-2 w-2 rounded-full bg-green-500 mr-1.5"></div>
-                        Online
-                      </div>
-                    </div>
+    <div className="min-h-screen bg-gray-50 pt-20 md:pt-5 pb-16">
+      {/* Desktop Sidebar */}
+      <Sidebar />
+
+      <Container description='Get help from our support team' title='Support'>
+        <motion.div variants={fadeUp}>
+          <div className="flex space-x-4 mb-6">
+            <Button
+              variant={activeTab === 'chat' ? 'default' : 'outline'}
+              onClick={() => setActiveTab('chat')}
+              className="flex items-center"
+            >
+              <MessageCircle className="h-4 w-4 mr-2" />
+              Live Chat
+            </Button>
+            <Button
+              variant={activeTab === 'email' ? 'default' : 'outline'}
+              onClick={() => setActiveTab('email')}
+              className="flex items-center"
+            >
+              <Mail className="h-4 w-4 mr-2" />
+              Email Support
+            </Button>
+          </div>
+
+          {activeTab === 'chat' ? (
+            <GlassCard className="p-0 overflow-hidden">
+              <div className="bg-primary/5 p-4 border-b flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                    <User className="h-5 w-5 text-primary" />
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                      <Phone className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                      <Clock className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-                
-                <div className="p-4 h-[400px] overflow-y-auto">
-                  {messages.length > 0 ? (
-                    <div className="space-y-4">
-                      {messages.map((message) => (
-                        <div
-                          key={message.id}
-                          className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                        >
-                          <div
-                            className={`max-w-[70%] p-3 rounded-lg ${
-                              message.sender === 'user'
-                                ? 'bg-primary text-white rounded-tr-none'
-                                : 'bg-gray-100 text-gray-800 rounded-tl-none'
-                            }`}
-                          >
-                            <p>{message.text}</p>
-                            <div
-                              className={`text-xs mt-1 flex justify-between items-center ${
-                                message.sender === 'user' ? 'text-primary-foreground/70' : 'text-gray-500'
-                              }`}
-                            >
-                              <span>{formatTime(message.timestamp)}</span>
-                              {message.sender === 'user' && (
-                                <CheckCircle className="h-3 w-3 ml-1" />
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="h-full flex items-center justify-center">
-                      <p className="text-muted-foreground">No messages yet</p>
-                    </div>
-                  )}
-                </div>
-                
-                <div className="p-4 border-t">
-                  <div className="flex space-x-2">
-                    <Input
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      placeholder="Type your message..."
-                      className="flex-1"
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                          e.preventDefault();
-                          handleSendMessage();
-                        }
-                      }}
-                    />
-                    <Button onClick={handleSendMessage} disabled={!newMessage.trim()}>
-                      <Send className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </GlassCard>
-            ) : (
-              <GlassCard className="p-6">
-                <h3 className="text-lg font-medium mb-4">Email Support Request</h3>
-                
-                <div className="space-y-4">
                   <div>
-                    <label htmlFor="subject" className="block text-sm font-medium mb-1">
-                      Subject
-                    </label>
-                    <Input
-                      id="subject"
-                      value={emailSubject}
-                      onChange={(e) => setEmailSubject(e.target.value)}
-                      placeholder="What is your inquiry about?"
-                    />
+                    <h3 className="font-medium">Support Agent</h3>
+                    <div className="flex items-center text-xs text-muted-foreground">
+                      <div className="h-2 w-2 rounded-full bg-green-500 mr-1.5"></div>
+                      Online
+                    </div>
                   </div>
-                  
-                  <div>
-                    <label htmlFor="message" className="block text-sm font-medium mb-1">
-                      Message
-                    </label>
-                    <Textarea
-                      id="message"
-                      value={emailMessage}
-                      onChange={(e) => setEmailMessage(e.target.value)}
-                      placeholder="Please describe your issue in detail..."
-                      rows={6}
-                    />
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <Checkbox 
-                      id="save-ticket"
-                      checked={saveTicket}
-                      onCheckedChange={(checked) => setSaveTicket(!!checked)}
-                    />
-                    <label
-                      htmlFor="save-ticket"
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      Save a copy of this ticket to my account
-                    </label>
-                  </div>
-                  
-                  <Button onClick={handleSendEmail} className="w-full">
-                    <Mail className="h-4 w-4 mr-2" />
-                    Send Email
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <Phone className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <Clock className="h-4 w-4" />
                   </Button>
                 </div>
-              </GlassCard>
-            )}
-          </motion.div>
-          
-          <motion.div variants={fadeUp}>
-            <GlassCard className="p-6">
-              <h3 className="text-lg font-medium mb-4">Contact Information</h3>
-              
-              <div className="space-y-4">
-                <div className="flex items-start space-x-3">
-                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mt-1">
-                    <Mail className="h-5 w-5 text-primary" />
+              </div>
+
+              <div className="p-4 h-[400px] overflow-y-auto">
+                {messages.length > 0 ? (
+                  <div className="space-y-4">
+                    {messages.map((message) => (
+                      <div
+                        key={message.id}
+                        className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                      >
+                        <div
+                          className={`max-w-[70%] p-3 rounded-lg ${message.sender === 'user'
+                            ? 'bg-primary text-white rounded-tr-none'
+                            : 'bg-gray-100 text-gray-800 rounded-tl-none'
+                            }`}
+                        >
+                          <p>{message.text}</p>
+                          <div
+                            className={`text-xs mt-1 flex justify-between items-center ${message.sender === 'user' ? 'text-primary-foreground/70' : 'text-gray-500'
+                              }`}
+                          >
+                            <span>{formatTime(message.timestamp)}</span>
+                            {message.sender === 'user' && (
+                              <CheckCircle className="h-3 w-3 ml-1" />
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <div>
-                    <h4 className="font-medium">Email Support</h4>
-                    <p className="text-sm text-muted-foreground">support@example.com</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Response time: Within 24 hours
-                    </p>
+                ) : (
+                  <div className="h-full flex items-center justify-center">
+                    <p className="text-muted-foreground">No messages yet</p>
                   </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mt-1">
-                    <Phone className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium">Phone Support</h4>
-                    <p className="text-sm text-muted-foreground">+1 (555) 123-4567</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Available Monday-Friday, 9am-5pm EST
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mt-1">
-                    <MessageCircle className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium">Live Chat</h4>
-                    <p className="text-sm text-muted-foreground">Available 24/7</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Average response time: 5 minutes
-                    </p>
-                  </div>
+                )}
+              </div>
+
+              <div className="p-4 border-t">
+                <div className="flex space-x-2">
+                  <Input
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    placeholder="Type your message..."
+                    className="flex-1"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSendMessage();
+                      }
+                    }}
+                  />
+                  <Button onClick={handleSendMessage} disabled={!newMessage.trim()}>
+                    <Send className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
             </GlassCard>
-          </motion.div>
+          ) : (
+            <GlassCard className="p-6">
+              <h3 className="text-lg font-medium mb-4">Email Support Request</h3>
+
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="subject" className="block text-sm font-medium mb-1">
+                    Subject
+                  </label>
+                  <Input
+                    id="subject"
+                    value={emailSubject}
+                    onChange={(e) => setEmailSubject(e.target.value)}
+                    placeholder="What is your inquiry about?"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="message" className="block text-sm font-medium mb-1">
+                    Message
+                  </label>
+                  <Textarea
+                    id="message"
+                    value={emailMessage}
+                    onChange={(e) => setEmailMessage(e.target.value)}
+                    placeholder="Please describe your issue in detail..."
+                    rows={6}
+                  />
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="save-ticket"
+                    checked={saveTicket}
+                    onCheckedChange={(checked) => setSaveTicket(!!checked)}
+                  />
+                  <label
+                    htmlFor="save-ticket"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Save a copy of this ticket to my account
+                  </label>
+                </div>
+
+                <Button onClick={handleSendEmail} className="w-full">
+                  <Mail className="h-4 w-4 mr-2" />
+                  Send Email
+                </Button>
+              </div>
+            </GlassCard>
+          )}
         </motion.div>
-      </div>
+
+        <motion.div variants={fadeUp}>
+          <GlassCard className="p-6">
+            <h3 className="text-lg font-medium mb-4">Contact Information</h3>
+
+            <div className="space-y-4">
+              <div className="flex items-start space-x-3">
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mt-1">
+                  <Mail className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h4 className="font-medium">Email Support</h4>
+                  <p className="text-sm text-muted-foreground">support@example.com</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Response time: Within 24 hours
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-3">
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mt-1">
+                  <Phone className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h4 className="font-medium">Phone Support</h4>
+                  <p className="text-sm text-muted-foreground">+1 (555) 123-4567</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Available Monday-Friday, 9am-5pm EST
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-3">
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center mt-1">
+                  <MessageCircle className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h4 className="font-medium">Live Chat</h4>
+                  <p className="text-sm text-muted-foreground">Available 24/7</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Average response time: 5 minutes
+                  </p>
+                </div>
+              </div>
+            </div>
+          </GlassCard>
+        </motion.div>
+      </Container>
     </div>
   );
 }
