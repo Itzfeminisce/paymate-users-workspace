@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import GlassCard from '@/components/ui/GlassCard';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
 import { fadeUp } from '@/lib/animations';
 
@@ -43,6 +44,7 @@ interface AuthFormProps {
 export function AuthForm({ type, redirectTo = '/' }: AuthFormProps) {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { login, signup, isLoading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   
@@ -60,16 +62,23 @@ export function AuthForm({ type, redirectTo = '/' }: AuthFormProps) {
     setIsLoading(true);
     
     try {
-      // For now, this is a mock implementation
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      if (type === 'login') {
+        // Use the login function from AuthContext
+        await login(data.email, data.password);
+        toast({
+          title: 'Successfully logged in!',
+          description: 'Welcome back to VTULink.',
+        });
+      } else {
+        // Use the signup function from AuthContext
+        await signup(data.email, data.password);
+        toast({
+          title: 'Account created successfully!',
+          description: 'Welcome to VTULink! You are now logged in.',
+        });
+      }
       
-      toast({
-        title: type === 'login' ? 'Successfully logged in!' : 'Account created successfully!',
-        description: type === 'login' 
-          ? 'Welcome back to VTULink.' 
-          : 'Welcome to VTULink! You are now logged in.',
-      });
-      
+      // Navigate to redirectTo after successful authentication
       navigate(redirectTo);
     } catch (error) {
       console.error('Authentication error:', error);
