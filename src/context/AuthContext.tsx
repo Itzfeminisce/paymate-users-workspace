@@ -1,10 +1,10 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface User {
   id: string;
   email: string;
   name?: string;
+  profilePicture?: string;
 }
 
 interface AuthContextType {
@@ -42,7 +42,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const userData: User = {
         id: '1',
         email,
-        name: email.split('@')[0]
+        name: email.split('@')[0],
+        profilePicture: '' // Add empty profile picture
       };
       
       // Save to localStorage
@@ -64,7 +65,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const userData: User = {
         id: '1',
         email,
-        name: email.split('@')[0]
+        name: email.split('@')[0],
+        profilePicture: '' // Add empty profile picture
       };
       
       // Save to localStorage
