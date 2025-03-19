@@ -91,7 +91,7 @@ const Pricing = () => {
   ];
 
   return (
-    <section className="py-20 bg-background">
+    <section className="py-20 bg-background" id="pricing" >
       <div className="container px-4 md:px-6">
         <motion.div 
           className="max-w-3xl mx-auto text-center mb-16"

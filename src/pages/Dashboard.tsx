@@ -77,7 +77,7 @@ export default function Dashboard() {
               Share your referral link with friends and earn bonuses when they sign up!
             </p>
             <div className="bg-gray-100 p-3 rounded-md font-mono text-sm overflow-x-auto">
-              https://vtulink.com/ref/{user?.id || '123456'}
+              https://paymate.com/ref/{user?.id || '123456'}
             </div>
             <div className="mt-4">
               <Button variant="outline" size="sm">Copy Link</Button>

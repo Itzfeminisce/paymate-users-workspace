@@ -22,7 +22,7 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
         >
           <Link to="/" className="flex items-center space-x-2">
             <div className="font-bold text-2xl text-primary">
-              VTU<span className="text-blue-500">Link</span>
+              Pay<span className="text-blue-500">Mate</span>
             </div>
           </Link>
         </motion.div>

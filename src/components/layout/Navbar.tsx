@@ -63,7 +63,7 @@ const Navbar = () => {
             transition={{ duration: 0.5 }}
             className="font-bold text-2xl text-primary"
           >
-            VTU<span className="text-blue-500">Link</span>
+            Pay<span className="text-blue-500">Mate</span>
           </motion.div>
         </Link>
 

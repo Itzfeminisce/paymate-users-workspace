@@ -68,7 +68,7 @@ const Footer = () => {
           {/* Brand and contact info */}
           <motion.div variants={fadeInUp} className="space-y-6">
             <div className="font-bold text-2xl text-primary">
-              VTU<span className="text-blue-500">Link</span>
+              Pay<span className="text-blue-500">Mate</span>
             </div>
             <p className="text-muted-foreground text-sm max-w-xs">
               The fastest and most reliable VTU service provider for all your virtual top-up needs.
@@ -80,7 +80,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3 text-sm text-muted-foreground">
                 <MailIcon className="h-4 w-4 text-primary/80" />
-                <span>support@vtulink.com</span>
+                <span>support@paymate.com</span>
               </div>
               <div className="flex items-start space-x-3 text-sm text-muted-foreground">
                 <MapPinIcon className="h-4 w-4 text-primary/80 mt-0.5" />
@@ -116,7 +116,7 @@ const Footer = () => {
           viewport={{ once: true }}
           className="mt-12 pt-6 border-t border-border/60 flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground"
         >
-          <p>© 2023 VTULink. All rights reserved.</p>
+          <p>© 2023 PayMate. All rights reserved.</p>
           <div className="mt-4 md:mt-0 flex space-x-6">
             <a href="#" className="hover:text-foreground transition-colors">
               Terms

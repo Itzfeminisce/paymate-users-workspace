@@ -96,7 +96,7 @@ const HowItWorks = () => {
             How It <span className="text-blue-500">Works</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            Getting started with VTULink is simple. Follow these quick steps to enjoy our seamless services.
+            Getting started with PayMate is simple. Follow these quick steps to enjoy our seamless services.
           </p>
         </motion.div>
 

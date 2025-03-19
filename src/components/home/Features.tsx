@@ -33,7 +33,7 @@ const features = [
   {
     icon: <CreditCard className="h-6 w-6 text-orange-500" />,
     title: 'Multiple Payment Options',
-    description: 'Pay with your card, bank transfer, or use your VTULink wallet.',
+    description: 'Pay with your card, bank transfer, or use your PayMate wallet.',
   },
 ];
 

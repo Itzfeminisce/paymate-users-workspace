@@ -292,7 +292,7 @@ export default function Messages() {
                 </div>
                 <div>
                   <h4 className="font-medium">Email Support</h4>
-                  <p className="text-sm text-muted-foreground">support@example.com</p>
+                  <p className="text-sm text-muted-foreground">support@paymate.com</p>
                   <p className="text-xs text-muted-foreground mt-1">
                     Response time: Within 24 hours
                   </p>
