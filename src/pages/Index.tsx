@@ -6,6 +6,7 @@ import Footer from '@/components/layout/Footer';
 import Hero from '@/components/home/Hero';
 import Features from '@/components/home/Features';
 import HowItWorks from '@/components/home/HowItWorks';
+import Pricing from '@/components/home/Pricing';
 
 const pageVariants = {
   initial: {
@@ -74,6 +75,7 @@ const Index = () => {
           <Hero />
           <Features />
           <HowItWorks />
+          <Pricing />
         </main>
         
         <Footer />

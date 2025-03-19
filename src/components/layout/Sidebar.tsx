@@ -6,12 +6,17 @@ import { getInitials } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
 import { navItems } from '@/lib/configs';
 import { Button } from '@/components/ui/button';
-import { Bell, LogOut, Menu, Settings, User, } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,} from "@/components/ui/dropdown-menu";
+import { Bell, LogOut, Menu, Monitor, Moon, Settings, Sun, User, } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu";
+import { useTheme } from '@/context/ThemeContext';
+import ThemeToggle from "@/components/ui/theme-toggle"
+
 
 const Sidebar = () => {
-      const { user, isAuthenticated, logout } = useAuth();
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+    const { user, isAuthenticated, logout } = useAuth();
+    const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+    if (!isAuthenticated) return null
     return (
         <div>
             {/* Desktop Sidebar */}
@@ -34,8 +39,8 @@ const Sidebar = () => {
                                 key={item.title}
                                 to={item.path}
                                 className={`flex items-center px-4 py-3 text-sm rounded-md ${window.location.pathname === item.path
-                                        ? 'bg-primary/10 text-primary'
-                                        : 'text-gray-700 hover:bg-gray-100'
+                                    ? 'bg-primary/10 text-primary'
+                                    : 'text-gray-700 hover:bg-gray-100'
                                     }`}
                             >
                                 {item.icon}
@@ -53,6 +58,9 @@ const Sidebar = () => {
                             <LogOut className="h-5 w-5 mr-2" />
                             Log out
                         </Button>
+
+                        {/* Theme Toggle Dropdown */}
+                        {/* <ThemeToggle /> */}
                     </div>
                 </div>
             </div>
@@ -83,8 +91,8 @@ const Sidebar = () => {
                                     key={item.title}
                                     to={item.path}
                                     className={`flex items-center px-4 py-3 text-sm rounded-md ${window.location.pathname === item.path
-                                            ? 'bg-primary/10 text-primary'
-                                            : 'text-gray-700 hover:bg-gray-100'
+                                        ? 'bg-primary/10 text-primary'
+                                        : 'text-gray-700 hover:bg-gray-100'
                                         }`}
                                     onClick={() => setIsMobileSidebarOpen(false)}
                                 >

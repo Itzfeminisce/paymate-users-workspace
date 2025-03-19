@@ -2,14 +2,17 @@ import {
   Bell,
   CreditCard,
   Database,
+  GalleryVerticalEnd,
   Home,
   LogOut,
   Menu,
   MessageSquare,
+  MoreHorizontalIcon,
   Phone,
   Settings,
   Smartphone,
   User,
+  Wallet,
   Wifi
 } from 'lucide-react';
 
@@ -19,12 +22,19 @@ export const serviceItems = [
   { title: 'Data', icon: <Wifi className="h-6 w-6" />, color: 'bg-blue-100 text-blue-600' },
   { title: 'Cable TV', icon: <Database className="h-6 w-6" />, color: 'bg-orange-100 text-orange-600' },
   { title: 'Electricity', icon: <CreditCard className="h-6 w-6" />, color: 'bg-green-100 text-green-600' },
+  { title: 'More', icon: <MoreHorizontalIcon className="h-6 w-6" />, color: 'bg-red-100 text-red-600' },
 ];
 
 // Navigation items
 export const navItems = [
   {
     title: 'Dashboard', icon: <Home className="h-5 w-5" />, path: '/dashboard'
+  },
+  {
+    title: 'Services', icon: <GalleryVerticalEnd className="h-5 w-5" />, path: '/services'
+  },
+  {
+    title: 'Fund Wallet', icon: <Wallet className="h-5 w-5" />, path: '/fund-wallet'
   },
   {
     title: 'My Profile', icon: <User className="h-5 w-5" />, path: '/profile'

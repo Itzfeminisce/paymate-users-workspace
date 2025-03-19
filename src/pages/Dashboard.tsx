@@ -1,15 +1,10 @@
 
-import React, { useState } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import GlassCard from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu";
-import { LogOut, Settings, User, } from 'lucide-react';
-import { fadeUp, staggerContainer } from '@/lib/animations';
-import { getInitials } from '@/lib/utils';
+import { fadeUp, } from '@/lib/animations';
 import { serviceItems } from '@/lib/configs';
 import Sidebar from '@/components/layout/Sidebar';
 import Container from '@/components/layout/Container';
@@ -35,7 +30,9 @@ export default function Dashboard() {
               <h3 className="text-lg font-medium mb-4">Account Balance</h3>
               <p className="text-3xl font-bold">₦0.00</p>
               <div className="mt-4">
-                <Button>Fund Wallet</Button>
+                <Button asChild>
+                  <Link to={"/fund-wallet"}> Fund Wallet</Link>
+                </Button>
               </div>
             </GlassCard>
           </motion.div>
@@ -57,16 +54,18 @@ export default function Dashboard() {
 
         <motion.div variants={fadeUp}>
           <h3 className="text-lg font-medium mb-4">Services</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {serviceItems.map((service) => (
-              <GlassCard key={service.title} className="p-4 cursor-pointer hover:scale-105 transition-transform">
-                <div className="flex flex-col items-center">
-                  <div className={`${service.color} p-3 rounded-full mb-3`}>
-                    {service.icon}
+              <Link to={`/services?ref=${service.title}`} key={service.title}>
+                <GlassCard className="p-4 cursor-pointer hover:scale-105 transition-transform">
+                  <div className="flex flex-col items-center">
+                    <div className={`${service.color} p-3 rounded-full mb-3`}>
+                      {service.icon}
+                    </div>
+                    <h4 className="text-sm font-medium">{service.title}</h4>
                   </div>
-                  <h4 className="text-sm font-medium">{service.title}</h4>
-                </div>
-              </GlassCard>
+                </GlassCard>
+              </Link>
             ))}
           </div>
         </motion.div>
