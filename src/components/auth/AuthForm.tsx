@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
@@ -64,14 +65,14 @@ export function AuthForm({ type, redirectTo = '/' }: AuthFormProps) {
         await login(data.email, data.password);
         toast({
           title: 'Successfully logged in!',
-          description: 'Welcome back to VTULink.',
+          description: 'Welcome back to PayMate.',
         });
       } else {
         // Use the signup function from AuthContext
         await signup(data.email, data.password);
         toast({
           title: 'Account created successfully!',
-          description: 'Welcome to VTULink! You are now logged in.',
+          description: 'Welcome to PayMate! You are now logged in.',
         });
       }
       
@@ -141,6 +142,17 @@ export function AuthForm({ type, redirectTo = '/' }: AuthFormProps) {
                 </FormItem>
               )}
             />
+            
+            {type === 'login' && (
+              <div className="flex justify-end">
+                <Link 
+                  to="/forgot-password" 
+                  className="text-sm text-primary hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+            )}
             
             {type === 'signup' && (
               <FormField

@@ -20,6 +20,8 @@ import { useEffect } from "react";
 import Services from "./pages/Services";
 import { ThemeProvider } from "./context/ThemeContext";
 import FundWallet from "./pages/FundWallet";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +44,8 @@ const App = () => {
                 <Route path="/" element={<Index />} />
                 <Route path="/sign-in" element={<SignIn />} />
                 <Route path="/sign-up" element={<SignUp />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/settings" element={<Settings />} />
