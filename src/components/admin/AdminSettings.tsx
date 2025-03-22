@@ -1,18 +1,35 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useToast } from '@/hooks/use-toast';
-import { settingsSchema, SettingsFormValues } from './settings/types';
-import { SettingsForm } from './settings/SettingsForm';
+import { settingsSchema, SettingsFormValues, Category } from './settings/types';
+import { SettingsForm } from './SettingsForm';
+
+// Mock data for categories
+const initialCategories: Category[] = [
+  { id: '1', name: 'Airtime', icon: 'phone', transactionFee: 1.0 },
+  { id: '2', name: 'Data', icon: 'wifi', transactionFee: 1.5 },
+  { id: '3', name: 'Cable TV', icon: 'tv', transactionFee: 1.0 },
+  { id: '4', name: 'Electricity', icon: 'zap', transactionFee: 0.5 },
+];
 
 export default function AdminSettings() {
   const { toast } = useToast();
+  const [categories] = useState<Category[]>(initialCategories);
+  
+  // Initialize categoryFees object
+  const initialCategoryFees: Record<string, number> = {};
+  categories.forEach(category => {
+    initialCategoryFees[category.id] = category.transactionFee;
+  });
   
   // Initial form values
   const defaultValues: SettingsFormValues = {
     platformName: 'PayMate VTU',
+    platformDescription: 'The most reliable VTU platform for all your utility payments',
+    platformIcon: '',
     supportEmail: 'support@paymatevtu.com',
     supportPhone: '08012345678',
     maintenanceMode: false,
@@ -23,6 +40,7 @@ export default function AdminSettings() {
     enableElectricityPayment: true,
     transactionFee: 1.5,
     minimumAccountBalance: 100,
+    categoryFees: initialCategoryFees,
   };
 
   const form = useForm<SettingsFormValues>({
@@ -48,7 +66,11 @@ export default function AdminSettings() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <SettingsForm form={form} onSubmit={onSubmit} />
+        <SettingsForm 
+          form={form} 
+          onSubmit={onSubmit} 
+          categories={categories}
+        />
       </CardContent>
     </Card>
   );
