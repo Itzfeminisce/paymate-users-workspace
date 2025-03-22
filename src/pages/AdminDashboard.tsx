@@ -7,6 +7,9 @@ import Sidebar from '@/components/layout/Sidebar';
 import AdminServices from '@/components/admin/AdminServices';
 import AdminUsers from '@/components/admin/AdminUsers';
 import AdminSettings from '@/components/admin/AdminSettings';
+import AdminCategories from '@/components/admin/categories/AdminCategories';
+import AdminProviders from '@/components/admin/providers/AdminProviders';
+import AdminValidity from '@/components/admin/validity/AdminValidity';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -33,14 +36,30 @@ export default function AdminDashboard() {
       >
         <div className="mt-8">
           <Tabs defaultValue="services" value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-7">
               <TabsTrigger value="services">Services</TabsTrigger>
+              <TabsTrigger value="categories">Categories</TabsTrigger>
+              <TabsTrigger value="providers">Providers</TabsTrigger>
+              <TabsTrigger value="validity">Validity</TabsTrigger>
               <TabsTrigger value="users">Users</TabsTrigger>
               <TabsTrigger value="settings">Settings</TabsTrigger>
+              <TabsTrigger value="logs">Logs</TabsTrigger>
             </TabsList>
             
             <TabsContent value="services" className="mt-6">
               <AdminServices />
+            </TabsContent>
+            
+            <TabsContent value="categories" className="mt-6">
+              <AdminCategories />
+            </TabsContent>
+            
+            <TabsContent value="providers" className="mt-6">
+              <AdminProviders />
+            </TabsContent>
+            
+            <TabsContent value="validity" className="mt-6">
+              <AdminValidity />
             </TabsContent>
             
             <TabsContent value="users" className="mt-6">
@@ -49,6 +68,22 @@ export default function AdminDashboard() {
             
             <TabsContent value="settings" className="mt-6">
               <AdminSettings />
+            </TabsContent>
+            
+            <TabsContent value="logs" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>System Logs</CardTitle>
+                  <CardDescription>
+                    View system activity and transaction logs.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-center py-8 text-muted-foreground">
+                    Log viewer will be implemented in future updates.
+                  </p>
+                </CardContent>
+              </Card>
             </TabsContent>
           </Tabs>
         </div>

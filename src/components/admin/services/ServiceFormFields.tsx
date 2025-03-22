@@ -1,14 +1,19 @@
 
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { UseFormReturn } from 'react-hook-form';
 import { ServiceFormValues } from './types';
+import { Category, Provider, Validity } from '../settings/types';
 
 interface ServiceFormFieldsProps {
   form: UseFormReturn<ServiceFormValues>;
+  categories: Category[];
+  providers: Provider[];
+  validities: Validity[];
 }
 
-export function ServiceFormFields({ form }: ServiceFormFieldsProps) {
+export function ServiceFormFields({ form, categories, providers, validities }: ServiceFormFieldsProps) {
   return (
     <>
       <FormField
@@ -24,19 +29,56 @@ export function ServiceFormFields({ form }: ServiceFormFieldsProps) {
           </FormItem>
         )}
       />
-      <FormField
-        control={form.control}
-        name="category"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Category</FormLabel>
-            <FormControl>
-              <Input placeholder="Enter category" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      <div className="grid grid-cols-2 gap-4">
+        <FormField
+          control={form.control}
+          name="category"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Category</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {categories.map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="providerId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Provider</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select provider" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {providers.map((provider) => (
+                    <SelectItem key={provider.id} value={provider.id}>
+                      {provider.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
       <div className="grid grid-cols-2 gap-4">
         <FormField
           control={form.control}
@@ -67,19 +109,45 @@ export function ServiceFormFields({ form }: ServiceFormFieldsProps) {
       </div>
       <FormField
         control={form.control}
+        name="validityId"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Validity</FormLabel>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select validity" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {validities.map((validity) => (
+                  <SelectItem key={validity.id} value={validity.id}>
+                    {validity.name} ({validity.duration} {validity.durationType})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
         name="status"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Status</FormLabel>
-            <FormControl>
-              <select 
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                {...field}
-              >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-            </FormControl>
+            <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
             <FormMessage />
           </FormItem>
         )}
