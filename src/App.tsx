@@ -22,6 +22,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import FundWallet from "./pages/FundWallet";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import AdminDashboard from "./pages/AdminDashboard";
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,7 @@ const App = () => {
                 <Route path="/messages" element={<Messages />} />
                 <Route path="/services" element={<Services />} />
                 <Route path="/fund-wallet" element={<FundWallet />} />
+                <Route path="/admin" element={<AdminDashboard />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
