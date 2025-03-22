@@ -13,14 +13,32 @@ import * as z from 'zod';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+// Define interfaces
+interface Customer {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  balance: number;
+  status: 'active' | 'inactive';
+}
+
+interface Admin {
+  id: string;
+  name: string;
+  email: string;
+  role: 'super admin' | 'admin' | 'support';
+  lastLogin: string;
+}
+
 // Mock data
-const initialCustomers = [
+const initialCustomers: Customer[] = [
   { id: '1', name: 'John Doe', email: 'john@example.com', phone: '08012345678', balance: 5000, status: 'active' },
   { id: '2', name: 'Jane Smith', email: 'jane@example.com', phone: '08087654321', balance: 2500, status: 'active' },
   { id: '3', name: 'Bob Johnson', email: 'bob@example.com', phone: '07056781234', balance: 0, status: 'inactive' },
 ];
 
-const initialAdmins = [
+const initialAdmins: Admin[] = [
   { id: '1', name: 'Admin User', email: 'admin@example.com', role: 'super admin', lastLogin: '2023-10-15' },
   { id: '2', name: 'Support Staff', email: 'support@example.com', role: 'support', lastLogin: '2023-10-14' },
 ];
@@ -45,15 +63,17 @@ const adminSchema = z.object({
 type CustomerFormValues = z.infer<typeof customerSchema>;
 type AdminFormValues = z.infer<typeof adminSchema>;
 
+type CurrentItem = (Customer | Admin) & { type?: 'customer' | 'admin' };
+
 export default function AdminUsers() {
   const [activeTab, setActiveTab] = useState("customers");
-  const [customers, setCustomers] = useState(initialCustomers);
-  const [admins, setAdmins] = useState(initialAdmins);
+  const [customers, setCustomers] = useState<Customer[]>(initialCustomers);
+  const [admins, setAdmins] = useState<Admin[]>(initialAdmins);
   const [isCustomerDialogOpen, setIsCustomerDialogOpen] = useState(false);
   const [isAdminDialogOpen, setIsAdminDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [currentItem, setCurrentItem] = useState<any>(null);
+  const [currentItem, setCurrentItem] = useState<CurrentItem | null>(null);
   const { toast } = useToast();
 
   const customerForm = useForm<CustomerFormValues>({
@@ -98,7 +118,7 @@ export default function AdminUsers() {
     setIsAdminDialogOpen(true);
   };
 
-  const openEditCustomerDialog = (customer: any) => {
+  const openEditCustomerDialog = (customer: Customer) => {
     setCurrentItem(customer);
     editCustomerForm.reset({
       name: customer.name,
@@ -110,14 +130,14 @@ export default function AdminUsers() {
     setIsEditDialogOpen(true);
   };
 
-  const openDeleteDialog = (item: any, type: 'customer' | 'admin') => {
+  const openDeleteDialog = (item: Customer | Admin, type: 'customer' | 'admin') => {
     setCurrentItem({ ...item, type });
     setIsDeleteDialogOpen(true);
   };
 
   const onSubmitCustomer = (data: CustomerFormValues) => {
     // In a real app, you would make an API call to create a customer
-    const newCustomer = {
+    const newCustomer: Customer = {
       id: (customers.length + 1).toString(),
       ...data,
     };
@@ -131,7 +151,7 @@ export default function AdminUsers() {
 
   const onSubmitAdmin = (data: AdminFormValues) => {
     // In a real app, you would make an API call to create an admin
-    const newAdmin = {
+    const newAdmin: Admin = {
       id: (admins.length + 1).toString(),
       name: data.name,
       email: data.email,
@@ -149,6 +169,8 @@ export default function AdminUsers() {
 
   const onSubmitEditCustomer = (data: CustomerFormValues) => {
     // In a real app, you would make an API call to update a customer
+    if (!currentItem) return;
+    
     const updatedCustomers = customers.map((customer) => 
       customer.id === currentItem.id ? { ...customer, ...data } : customer
     );
@@ -162,6 +184,8 @@ export default function AdminUsers() {
 
   const onDelete = () => {
     // In a real app, you would make an API call to delete a user
+    if (!currentItem || !currentItem.type) return;
+    
     if (currentItem.type === 'customer') {
       const filteredCustomers = customers.filter((customer) => customer.id !== currentItem.id);
       setCustomers(filteredCustomers);

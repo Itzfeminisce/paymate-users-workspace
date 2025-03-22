@@ -12,8 +12,18 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useToast } from '@/hooks/use-toast';
 
+// Define service interface
+interface Service {
+  id: string;
+  name: string;
+  category: string;
+  price: number;
+  discount: number;
+  status: 'active' | 'inactive';
+}
+
 // Mock data for services
-const initialServices = [
+const initialServices: Service[] = [
   { id: '1', name: 'MTN Airtime', category: 'Airtime', price: 100, discount: 2, status: 'active' },
   { id: '2', name: 'Airtel Data 1GB', category: 'Data', price: 300, discount: 1, status: 'active' },
   { id: '3', name: 'DSTV Subscription', category: 'Cable TV', price: 2000, discount: 0.5, status: 'active' },
@@ -32,11 +42,11 @@ const serviceSchema = z.object({
 type ServiceFormValues = z.infer<typeof serviceSchema>;
 
 export default function AdminServices() {
-  const [services, setServices] = useState(initialServices);
+  const [services, setServices] = useState<Service[]>(initialServices);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [currentService, setCurrentService] = useState<any>(null);
+  const [currentService, setCurrentService] = useState<Service | null>(null);
   const { toast } = useToast();
 
   const form = useForm<ServiceFormValues>({
@@ -66,7 +76,7 @@ export default function AdminServices() {
     setIsAddDialogOpen(true);
   };
 
-  const openEditDialog = (service: any) => {
+  const openEditDialog = (service: Service) => {
     setCurrentService(service);
     editForm.reset({
       name: service.name,
@@ -78,14 +88,14 @@ export default function AdminServices() {
     setIsEditDialogOpen(true);
   };
 
-  const openDeleteDialog = (service: any) => {
+  const openDeleteDialog = (service: Service) => {
     setCurrentService(service);
     setIsDeleteDialogOpen(true);
   };
 
   const onSubmitAdd = (data: ServiceFormValues) => {
     // In a real app, you would make an API call to create a service
-    const newService = {
+    const newService: Service = {
       id: (services.length + 1).toString(),
       ...data,
     };
@@ -99,6 +109,8 @@ export default function AdminServices() {
 
   const onSubmitEdit = (data: ServiceFormValues) => {
     // In a real app, you would make an API call to update a service
+    if (!currentService) return;
+    
     const updatedServices = services.map((service) => 
       service.id === currentService.id ? { ...service, ...data } : service
     );
@@ -112,6 +124,8 @@ export default function AdminServices() {
 
   const onDelete = () => {
     // In a real app, you would make an API call to delete a service
+    if (!currentService) return;
+    
     const filteredServices = services.filter((service) => service.id !== currentService.id);
     setServices(filteredServices);
     setIsDeleteDialogOpen(false);
