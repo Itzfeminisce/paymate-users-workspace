@@ -7,7 +7,7 @@ import { ValidityTable } from './ValidityTable';
 import { AddValidityDialog } from './AddValidityDialog';
 import { EditValidityDialog } from './EditValidityDialog';
 import { DeleteValidityDialog } from './DeleteValidityDialog';
-
+ 
 // Mock data for categories (should ideally come from a categories context or API)
 const mockCategories: Category[] = [
   { id: '1', name: 'Airtime', icon: 'phone', transactionFee: 1.0 },

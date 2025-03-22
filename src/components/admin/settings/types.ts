@@ -61,7 +61,7 @@ export interface Category {
   name: string;
   icon?: string;
   transactionFee: number;
-}
+} 
 
 export interface Provider {
   id: string;

@@ -12,12 +12,13 @@ import AdminProviders from '@/components/admin/providers/AdminProviders';
 import AdminValidity from '@/components/admin/validity/AdminValidity';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import AdminLogs from '@/components/admin/syslogs/AdminLog';
 
 export default function AdminDashboard() {
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("services");
-  
+
   // Redirect if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
@@ -43,47 +44,35 @@ export default function AdminDashboard() {
               <TabsTrigger value="validity">Validity</TabsTrigger>
               <TabsTrigger value="users">Users</TabsTrigger>
               <TabsTrigger value="settings">Settings</TabsTrigger>
-              <TabsTrigger value="logs">Logs</TabsTrigger>
+              <TabsTrigger value="logs">System Logs</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="services" className="mt-6">
               <AdminServices />
             </TabsContent>
-            
+
             <TabsContent value="categories" className="mt-6">
               <AdminCategories />
             </TabsContent>
-            
+
             <TabsContent value="providers" className="mt-6">
               <AdminProviders />
             </TabsContent>
-            
+
             <TabsContent value="validity" className="mt-6">
               <AdminValidity />
             </TabsContent>
-            
+
             <TabsContent value="users" className="mt-6">
               <AdminUsers />
             </TabsContent>
-            
+
             <TabsContent value="settings" className="mt-6">
               <AdminSettings />
             </TabsContent>
-            
+
             <TabsContent value="logs" className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>System Logs</CardTitle>
-                  <CardDescription>
-                    View system activity and transaction logs.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-center py-8 text-muted-foreground">
-                    Log viewer will be implemented in future updates.
-                  </p>
-                </CardContent>
-              </Card>
+              <AdminLogs />
             </TabsContent>
           </Tabs>
         </div>

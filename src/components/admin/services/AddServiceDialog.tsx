@@ -1,4 +1,3 @@
-
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
@@ -6,7 +5,9 @@ import { Plus } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ServiceFormFields } from './ServiceFormFields';
-import { serviceSchema, ServiceFormValues } from './types';
+import { serviceSchema, ServiceFormValues} from './types';
+import { categories, providers, validities } from './mock';
+
 
 interface AddServiceDialogProps {
   isOpen: boolean;
@@ -20,6 +21,8 @@ export function AddServiceDialog({ isOpen, onOpenChange, onSubmit }: AddServiceD
     defaultValues: {
       name: '',
       category: '',
+      providerId: '',
+      validityId: '',
       price: 0,
       discount: 0,
       status: 'active',
@@ -50,7 +53,12 @@ export function AddServiceDialog({ isOpen, onOpenChange, onSubmit }: AddServiceD
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <ServiceFormFields form={form} />
+            <ServiceFormFields 
+              form={form} 
+              categories={categories} 
+              providers={providers} 
+              validities={validities}
+            />
             <DialogFooter>
               <Button type="submit">Add Service</Button>
             </DialogFooter>

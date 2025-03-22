@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ServiceFormFields } from './ServiceFormFields';
 import { Service, serviceSchema, ServiceFormValues } from './types';
 import { useEffect } from 'react';
+import { categories, providers, validities } from './mock';
 
 interface EditServiceDialogProps {
   isOpen: boolean;
@@ -50,7 +51,7 @@ export function EditServiceDialog({ isOpen, onOpenChange, onSubmit, currentServi
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <ServiceFormFields form={form} />
+            <ServiceFormFields form={form}  categories={categories} providers={providers} validities={validities}/>
             <DialogFooter>
               <Button type="submit">Update Service</Button>
             </DialogFooter>
