@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react'
 import { Navigate, Link } from 'react-router-dom';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -6,7 +7,7 @@ import { getInitials } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
 import { navItems } from '@/lib/configs';
 import { Button } from '@/components/ui/button';
-import { Bell, LogOut, Menu, Monitor, Moon, Settings, Sun, User, } from 'lucide-react';
+import { Bell, LogOut, Menu, Monitor, Moon, Settings, ShieldCheck, Sun, User, } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu";
 import { useTheme } from '@/context/ThemeContext';
 import ThemeToggle from "@/components/ui/theme-toggle"
@@ -15,6 +16,9 @@ import ThemeToggle from "@/components/ui/theme-toggle"
 const Sidebar = () => {
     const { user, isAuthenticated, logout } = useAuth();
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+    // In a real app, this would be determined by the user's role
+    const isAdmin = true; // For demo purposes, everyone can access admin dashboard
 
     if (!isAuthenticated) return null
     return (
@@ -47,6 +51,21 @@ const Sidebar = () => {
                                 <span className="ml-3">{item.title}</span>
                             </Link>
                         ))}
+                        
+                        {/* Admin Dashboard Link - Only visible to admins */}
+                        {isAdmin && (
+                            <Link
+                                to="/admin"
+                                className={`flex items-center px-4 py-3 text-sm rounded-md ${
+                                    window.location.pathname === '/admin'
+                                    ? 'bg-primary/10 text-primary'
+                                    : 'text-gray-700 hover:bg-gray-100'
+                                }`}
+                            >
+                                <ShieldCheck className="h-5 w-5" />
+                                <span className="ml-3">Admin Dashboard</span>
+                            </Link>
+                        )}
                     </nav>
 
                     <div className="px-3 py-4 border-t">
@@ -100,6 +119,22 @@ const Sidebar = () => {
                                     <span className="ml-3">{item.title}</span>
                                 </Link>
                             ))}
+                            
+                            {/* Admin Dashboard Link - Only visible to admins */}
+                            {isAdmin && (
+                                <Link
+                                    to="/admin"
+                                    className={`flex items-center px-4 py-3 text-sm rounded-md ${
+                                        window.location.pathname === '/admin'
+                                        ? 'bg-primary/10 text-primary'
+                                        : 'text-gray-700 hover:bg-gray-100'
+                                    }`}
+                                    onClick={() => setIsMobileSidebarOpen(false)}
+                                >
+                                    <ShieldCheck className="h-5 w-5" />
+                                    <span className="ml-3">Admin Dashboard</span>
+                                </Link>
+                            )}
                         </nav>
 
                         <div className="px-3 py-4 border-t">
@@ -135,7 +170,6 @@ const Sidebar = () => {
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-
         </div>
     )
 }
