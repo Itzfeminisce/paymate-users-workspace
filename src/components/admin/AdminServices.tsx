@@ -42,7 +42,11 @@ export default function AdminServices() {
     // In a real app, you would make an API call to create a service
     const newService: Service = {
       id: (services.length + 1).toString(),
-      ...data,
+      name: data.name,
+      category: data.category,
+      price: data.price,
+      discount: data.discount,
+      status: data.status
     };
     setServices([...services, newService]);
     setIsAddDialogOpen(false);
@@ -57,7 +61,14 @@ export default function AdminServices() {
     if (!currentService) return;
     
     const updatedServices = services.map((service) => 
-      service.id === currentService.id ? { ...service, ...data } : service
+      service.id === currentService.id ? { 
+        ...service, 
+        name: data.name,
+        category: data.category,
+        price: data.price,
+        discount: data.discount,
+        status: data.status
+      } : service
     );
     setServices(updatedServices);
     setIsEditDialogOpen(false);

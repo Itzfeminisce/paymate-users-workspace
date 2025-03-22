@@ -64,7 +64,11 @@ export default function AdminUsers() {
     // In a real app, you would make an API call to create a customer
     const newCustomer: Customer = {
       id: (customers.length + 1).toString(),
-      ...data,
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      balance: data.balance,
+      status: data.status
     };
     setCustomers([...customers, newCustomer]);
     setIsCustomerDialogOpen(false);
@@ -97,7 +101,14 @@ export default function AdminUsers() {
     if (!currentItem) return;
     
     const updatedCustomers = customers.map((customer) => 
-      customer.id === currentItem.id ? { ...customer, ...data } : customer
+      customer.id === currentItem.id ? {
+        ...customer,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        balance: data.balance,
+        status: data.status
+      } : customer
     );
     setCustomers(updatedCustomers);
     setIsEditDialogOpen(false);
