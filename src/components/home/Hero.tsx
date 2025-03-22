@@ -41,10 +41,10 @@ const Hero = () => {
 
             <div className="flex flex-wrap gap-4">
               <Button size="lg" asChild className="group">
-                <a href={isAuthenticated ? "/dashboard" : "/sign-up"}>
+                <Link to={isAuthenticated ? "/dashboard" : "/sign-up"}>
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   Get Started
-                </a>
+                </Link>
               </Button>
               <Button size="lg" asChild variant="outline">
                 <a href={"/#services"}>
