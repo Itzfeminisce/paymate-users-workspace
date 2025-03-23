@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { DialogFormFields } from './DialogFormFields';
 import { LogEntry, LogFormValues, logSchema } from './types';
+import { useEffect } from 'react';
 
 
 interface AddServiceDialogProps {
@@ -16,9 +17,7 @@ interface AddServiceDialogProps {
 }
 
 export function EditLogDialog({ isOpen, currentLog, onOpenChange, onSubmit }: AddServiceDialogProps) {
- 
-  console.log({currentLog});
-  
+
   const form = useForm<LogFormValues>({
     resolver: zodResolver(logSchema),
     defaultValues: {
@@ -28,19 +27,19 @@ export function EditLogDialog({ isOpen, currentLog, onOpenChange, onSubmit }: Ad
     },
   });
 
-  const handleOpenChange = (open: boolean) => {
-    if (!open) {
+  useEffect(() => {
+    if (currentLog) {
       form.reset({
-        level: currentLog?.level,
-        message: currentLog?.message,
-        module: currentLog?.module
+        level: currentLog.level,
+        message: currentLog.message,
+        module: currentLog.module,
       });
     }
-    onOpenChange(open);
-  };
+  }, [currentLog, form]);
+
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         <Button onClick={() => onOpenChange(true)}>
           <Plus className="h-4 w-4 mr-2" />

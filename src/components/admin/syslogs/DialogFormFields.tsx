@@ -1,9 +1,6 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { LogFormValues } from './types';
-import { createLog } from './logCrudUtils';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { UseFormReturn } from 'react-hook-form';
 
@@ -14,8 +11,9 @@ interface DialogFormFieldsProps {
 const logLevels = [
   { label: 'Debug', value: 'debug' },
   { label: 'Info', value: 'info' },
-  { label: 'Warning', value: 'warning' },
+  { label: 'Warning', value: 'warn' },
   { label: 'Error', value: 'error' },
+  { label: 'System', value: 'system' },
 ]
 
 export const DialogFormFields = ({ form }: DialogFormFieldsProps) => {
