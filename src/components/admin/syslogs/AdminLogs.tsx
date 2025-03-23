@@ -1,9 +1,10 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { LogCard } from './LogCard';
 import { fetchLogs } from './fetchLogs';
 import { DEFAULT_PAGE_SIZE, LogEntry, REFRESH_INTERVALS } from './types';
+import { deleteLog } from './logCrudUtils';
+import { EditLogDialog } from './EditLogDialog';
 
 export default function AdminLogs() {
   const [logs, setLogs] = useState<LogEntry[]>([]);
@@ -18,7 +19,24 @@ export default function AdminLogs() {
   const [refreshInterval, setRefreshInterval] = useState(REFRESH_INTERVALS[0].value);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const refreshTimerRef = useRef<number>();
+  const [editingLog, setEditingLog] = useState<LogEntry | null>(null);
+  const [isEditingLog, setIsEditingLog] = useState(false)
   const { toast } = useToast();
+
+  const handleDeleteLog = (id: string) => {
+    deleteLog(id);
+    // Refresh logs after deletion
+  };
+
+  const handleEditLog = (log: LogEntry) => {
+    setEditingLog(log);
+    setIsEditingLog(true)
+  };
+
+  const handleLogUpdated = (log: LogEntry) => {
+    setEditingLog(null);
+    // Refresh logs after update
+  };
 
   const handleFetchLogs = useCallback(() => {
     fetchLogs(logLevel, searchTerm, sortColumn, sortDirection, setLogs, setLoading, toast);
@@ -53,26 +71,37 @@ export default function AdminLogs() {
   const totalPages = Math.ceil(logs.length / pageSize);
 
   return (
-    <LogCard
-      logs={paginatedLogs}
-      loading={loading}
-      searchTerm={searchTerm}
-      setSearchTerm={setSearchTerm}
-      logLevel={logLevel}
-      setLogLevel={setLogLevel}
-      autoRefresh={autoRefresh}
-      setAutoRefresh={setAutoRefresh}
-      refreshInterval={refreshInterval}
-      setRefreshInterval={setRefreshInterval}
-      fetchLogs={handleFetchLogs}
-      sortColumn={sortColumn}
-      sortDirection={sortDirection}
-      handleSort={handleSort}
-      page={page}
-      setPage={setPage}
-      pageSize={pageSize}
-      setPageSize={setPageSize}
-      totalPages={totalPages}
-    />
+    <div>
+      <LogCard
+        logs={paginatedLogs}
+        loading={loading}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        logLevel={logLevel}
+        setLogLevel={setLogLevel}
+        autoRefresh={autoRefresh}
+        setAutoRefresh={setAutoRefresh}
+        refreshInterval={refreshInterval}
+        setRefreshInterval={setRefreshInterval}
+        fetchLogs={handleFetchLogs}
+        sortColumn={sortColumn}
+        sortDirection={sortDirection}
+        handleSort={handleSort}
+        page={page}
+        setPage={setPage}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+        totalPages={totalPages}
+        handleDeleteLog={handleDeleteLog}
+        handleEditLog={handleEditLog}
+      />
+
+
+      <EditLogDialog
+        isOpen={isEditingLog}
+        onOpenChange={setIsEditingLog}
+        onSubmit={handleLogUpdated}
+        currentLog={editingLog} />
+    </div>
   );
 }

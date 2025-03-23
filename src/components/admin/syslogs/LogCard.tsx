@@ -25,6 +25,8 @@ interface LogCardProps {
   pageSize: number;
   setPageSize: (size: number) => void;
   totalPages: number;
+  handleDeleteLog: (id: string) => void;
+  handleEditLog: (log: LogEntry) => void;
 }
 
 export const LogCard = ({
@@ -47,6 +49,8 @@ export const LogCard = ({
   pageSize,
   setPageSize,
   totalPages,
+  handleDeleteLog,
+  handleEditLog
 }: LogCardProps) => {
   return (
     <Card>
@@ -72,6 +76,8 @@ export const LogCard = ({
       </CardHeader>
       <CardContent>
         <LogTable
+          onDeleteLog={handleDeleteLog}
+          onEditLog={handleEditLog}
           logs={logs}
           loading={loading}
           sortColumn={sortColumn}

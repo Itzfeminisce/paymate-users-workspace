@@ -12,7 +12,7 @@ import AdminProviders from '@/components/admin/providers/AdminProviders';
 import AdminValidity from '@/components/admin/validity/AdminValidity';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import AdminLogs from '@/components/admin/syslogs/AdminLog';
+import AdminLogs from '@/components/admin/syslogs/AdminLogs';
 
 export default function AdminDashboard() {
   const { user, isAuthenticated } = useAuth();

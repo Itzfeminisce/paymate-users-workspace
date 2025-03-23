@@ -1,3 +1,7 @@
+import { z } from "zod";
+
+
+
 export interface LogEntry {
   id: string;
   timestamp: string;
@@ -8,6 +12,7 @@ export interface LogEntry {
   userId?: string;
   action?: string;
   status?: 'success' | 'failure' | 'pending';
+  isEditing?: boolean; // Optional field to track if a log is being edited
 }
 
 export interface Column {
@@ -39,5 +44,16 @@ export const REFRESH_INTERVALS: RefreshInterval[] = [
   { value: 60, label: '1 minute' },
 ];
 
+
+
+// Form schema for customers
+export const logSchema = z.object({
+  message: z.string().min(1, 'Message is required'),
+  level: z.string().min(1, 'Level is required'),
+  module: z.string().min(1, 'Module is required'),
+});
+
+
 export const DEFAULT_PAGE_SIZE = 10;
 export const PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
+export type LogFormValues = z.infer<typeof logSchema>;

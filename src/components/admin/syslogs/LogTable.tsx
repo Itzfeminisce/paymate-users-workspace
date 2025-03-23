@@ -1,76 +1,68 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { LogEntry } from './types';
 import { getLevelColor, getStatusColor } from './logUtils';
+import { Button } from '@/components/ui/button';
+import { Edit, Trash } from 'lucide-react';
 
 interface LogTableProps {
-  logs: LogEntry[];
-  loading: boolean;
-  sortColumn: string;
-  sortDirection: 'asc' | 'desc';
-  handleSort: (column: string) => void;
-}
+    logs: LogEntry[];
+    loading: boolean;
+    sortColumn: string;
+    sortDirection: 'asc' | 'desc';
+    handleSort: (column: string) => void;
+    onEditLog: (log: LogEntry) => void;
+    onDeleteLog: (id: string) => void;
+  }
 
-export const LogTable = ({ logs, loading, sortColumn, sortDirection, handleSort }: LogTableProps) => {
-  return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="cursor-pointer" onClick={() => handleSort('timestamp')}>
-            Timestamp
-            {sortColumn === 'timestamp' && (
-              <span className="ml-2">{sortDirection === 'asc' ? '↑' : '↓'}</span>
-            )}
-          </TableHead>
-          <TableHead>Level</TableHead>
-          <TableHead className="cursor-pointer" onClick={() => handleSort('module')}>
-            Module
-            {sortColumn === 'module' && (
-              <span className="ml-2">{sortDirection === 'asc' ? '↑' : '↓'}</span>
-            )}
-          </TableHead>
-          <TableHead>Message</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>User</TableHead>
-          <TableHead>Action</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {loading ? (
+  export const LogTable = ({
+    logs,
+    loading,
+    sortColumn,
+    sortDirection,
+    handleSort,
+    onEditLog,
+    onDeleteLog,
+  }: LogTableProps) => {
+    return (
+      <Table>
+        <TableHeader>
           <TableRow>
-            <TableCell colSpan={7} className="text-center py-8">
-              Loading logs...
-            </TableCell>
+            <TableHead className="cursor-pointer" onClick={() => handleSort('timestamp')}>
+              Timestamp
+              {sortColumn === 'timestamp' && (
+                <span className="ml-2">{sortDirection === 'asc' ? '↑' : '↓'}</span>
+              )}
+            </TableHead>
+            <TableHead>Level</TableHead>
+            <TableHead>Module</TableHead>
+            <TableHead>Message</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>User</TableHead>
+            <TableHead>Action</TableHead>
+            <TableHead>Actions</TableHead> {/* New column for edit/delete */}
           </TableRow>
-        ) : logs.length === 0 ? (
-          <TableRow>
-            <TableCell colSpan={7} className="text-center py-8">
-              No logs found
-            </TableCell>
-          </TableRow>
-        ) : (
-          logs.map((log) => (
-            <TableRow key={log.id} className="hover:bg-gray-50 transition-colors">
+        </TableHeader>
+        <TableBody>
+          {logs.map((log) => (
+            <TableRow key={log.id}>
               <TableCell>{log.timestamp}</TableCell>
-              <TableCell>
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getLevelColor(log.level)}`}>
-                  {log.level}
-                </span>
-              </TableCell>
+              <TableCell>{log.level}</TableCell>
               <TableCell>{log.module}</TableCell>
               <TableCell>{log.message}</TableCell>
-              <TableCell>
-                {log.status && (
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(log.status)}`}>
-                    {log.status}
-                  </span>
-                )}
-              </TableCell>
+              <TableCell>{log.status}</TableCell>
               <TableCell>{log.userId || '-'}</TableCell>
               <TableCell>{log.action || '-'}</TableCell>
+              <TableCell>
+                <Button variant="ghost" size="icon" onClick={() => onEditLog(log)}>
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={() => onDeleteLog(log.id)}>
+                  <Trash className="h-4 w-4" />
+                </Button>
+              </TableCell>
             </TableRow>
-          ))
-        )}
-      </TableBody>
-    </Table>
-  );
-};
+          ))}
+        </TableBody>
+      </Table>
+    );
+  };
