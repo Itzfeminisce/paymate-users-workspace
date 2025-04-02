@@ -4,8 +4,9 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 interface User {
   id: string;
   email: string;
-  name?: string;
+  name: string;
   profilePicture?: string;
+  token?: string;
 }
 
 interface AuthContextType {
@@ -13,7 +14,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string) => Promise<void>;
+  signup: ({name, email, password}: {name: string, email: string, password: string}) => Promise<void>;
   logout: () => void;
   requestPasswordReset: (email: string) => Promise<void>;
   resetPassword: (email: string, otp: string, newPassword: string) => Promise<void>;
@@ -46,7 +47,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         id: '1',
         email,
         name: email.split('@')[0],
-        profilePicture: '' // Add empty profile picture
+        profilePicture: '', // Add empty profile picture
+        token: '1234567890' // Add token
       };
       
       // Save to localStorage
@@ -58,7 +60,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Mock signup function
-  const signup = async (email: string, password: string) => {
+  const signup = async ({name, email, password}: {name: string, email: string, password: string}) => {
     setIsLoading(true);
     try {
       // Simulate API call
@@ -68,8 +70,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const userData: User = {
         id: '1',
         email,
-        name: email.split('@')[0],
-        profilePicture: '' // Add empty profile picture
+        name,
+        profilePicture: '', // Add empty profile picture
+        token: '1234567890' // Add token
       };
       
       // Save to localStorage

@@ -13,6 +13,7 @@ import FormSubmitButton from './FormSubmitButton';
 
 // Form schema for signup with password confirmation
 const signupSchema = z.object({
+  name: z.string().min(2, { message: 'Full name must be at least 2 characters' }),
   email: z.string().email({ message: 'Please enter a valid email address' }),
   password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
   confirmPassword: z.string(),
@@ -38,17 +39,17 @@ export default function SignupForm({ redirectTo }: SignupFormProps) {
   // Initialize the form
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
-    defaultValues: { email: '', password: '', confirmPassword: '' }
+    defaultValues: { name: '', email: '', password: '', confirmPassword: '' }
   });
   
-  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+  const togglePasswordVisibility = () => setShowPassword(prev => !prev);
   
   async function onSubmit(data: SignupFormValues) {
     setIsLoading(true);
     
     try {
       // Use the signup function from AuthContext
-      await signup(data.email, data.password);
+      await signup({name: data.name, email: data.email, password: data.password});
       toast({
         title: 'Account created successfully!',
         description: 'Welcome to PayMate! You are now logged in.',
@@ -71,6 +72,20 @@ export default function SignupForm({ redirectTo }: SignupFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Full Name</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter your full name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
         <FormField
           control={form.control}
           name="email"

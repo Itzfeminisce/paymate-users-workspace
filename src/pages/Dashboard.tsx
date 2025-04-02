@@ -53,7 +53,7 @@ export default function Dashboard() {
         </div>
 
         <motion.div variants={fadeUp}>
-          <h3 className="text-lg font-medium mb-4">Services</h3>
+          <h3 className="text-lg font-medium mb-4">Categories</h3>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {serviceItems.map((service) => (
               <Link to={`/services?ref=${service.title}`} key={service.title}>

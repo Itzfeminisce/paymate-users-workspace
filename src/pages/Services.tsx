@@ -204,7 +204,7 @@ const getServiceSchema = (serviceType) => {
 function ServiceSidebar({ activeService, setActiveService }) {
   return (
     <GlassCard className="p-6 min-h-[200px] w-full md:w-[250px]">
-      <h3 className="text-lg font-medium mb-4">Select Service</h3>
+      <h3 className="text-lg font-medium mb-4">Select Category</h3>
       <div className="gap-4 grid grid-cols-2 md:flex flex-col ">
         {serviceTypesArr.map((service) => (
           <div

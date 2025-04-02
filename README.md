@@ -67,3 +67,19 @@ Simply open [Lovable](https://lovable.dev/projects/77fd13e4-18f7-409b-ab12-86a9f
 ## I want to use a custom domain - is that possible?
 
 We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+
+## Environment Setup
+
+1. Copy the example environment file:
+```bash
+cp .env.example .env
+```
+
+2. Fill in the required environment variables in `.env`:
+- `VITE_APP_TITLE`: Application title
+- `VITE_API_URL`: Backend API URL
+- `VITE_PAYSTACK_PUBLIC_KEY`: Paystack public key
+- `VITE_FLUTTERWAVE_PUBLIC_KEY`: Flutterwave public key
+- `VITE_APP_NAME`: Application name
+- `VITE_APP_VERSION`: Application version
+- `VITE_APP_ENV`: Environment (development/production)

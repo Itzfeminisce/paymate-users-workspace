@@ -6,6 +6,7 @@ import GlassCard from '@/components/ui/GlassCard';
 import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
 import { fadeUp } from '@/lib/animations';
+import { SocialAuthButtons } from './SocialAuthButtons';
 
 interface AuthFormProps {
   type: 'login' | 'signup';
@@ -20,7 +21,11 @@ export function AuthForm({ type, redirectTo = '/' }: AuthFormProps) {
       animate="visible"
       className="w-full max-w-md mx-auto"
     >
-      <GlassCard className="p-6 md:p-8">
+      <GlassCard className="p-6 md:p-8 space-y-4">
+        {/* Google Auth Button */}
+        <SocialAuthButtons redirectTo={redirectTo}/>
+
+
         {type === 'login' ? (
           <LoginForm redirectTo={redirectTo} />
         ) : (

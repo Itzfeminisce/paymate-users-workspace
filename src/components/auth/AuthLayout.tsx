@@ -12,7 +12,7 @@ interface AuthLayoutProps {
 
 export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
   return (
-    <div className="flex min-h-screen flex-col justify-center py-12 sm:px-6 lg:px-8 bg-gradient-to-b from-blue-50 to-white">
+    <div className="flex min-h-screen flex-col justify-center py-12 md:pt-4 sm:px-6 lg:px-8 bg-gradient-to-b from-blue-50 to-white">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
