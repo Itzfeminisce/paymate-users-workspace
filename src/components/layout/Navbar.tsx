@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -15,12 +14,120 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+// Navigation items configuration
 const navItems = [
   { name: 'Home', href: '/' },
   { name: 'Services', href: '#services' },
   { name: 'How It Works', href: '#how-it-works' },
   { name: 'Pricing', href: '#pricing' },
 ];
+
+// Animation variants for reuse
+const fadeInScale = {
+  initial: { opacity: 0, scale: 0.9 },
+  animate: { opacity: 1, scale: 1 },
+  transition: { duration: 0.3 }
+};
+
+const fadeInY = {
+  initial: { opacity: 0, y: -10 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.3 }
+};
+
+// Navigation components
+const NavLogo = () => (
+  <Link to="/" className="flex items-center space-x-2">
+    <motion.div
+      {...fadeInScale}
+      transition={{ duration: 0.5 }}
+      className="font-bold text-2xl text-primary"
+    >
+      Pay<span className="text-blue-500">Mate</span>
+    </motion.div>
+  </Link>
+);
+
+const DesktopNavItems = () => (
+  <nav className="hidden md:flex items-center space-x-8">
+    {navItems.map((item, i) => (
+      <motion.div
+        key={item.name}
+        {...fadeInY}
+        transition={{ duration: 0.3, delay: 0.1 * i }}
+      >
+        <a
+          href={item.href}
+          className="text-sm font-medium text-foreground/90 hover:text-primary transition-colors"
+        >
+          {item.name}
+        </a>
+      </motion.div>
+    ))}
+  </nav>
+);
+
+const MobileNavItems = ({ onItemClick }: { onItemClick: () => void }) => (
+  <div className="container mx-auto px-4 py-4 flex flex-col space-y-4">
+    {navItems.map((item, i) => (
+      <motion.div
+        key={item.name}
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.2, delay: 0.05 * i }}
+      >
+        <a
+          href={item.href}
+          className="block py-2 text-base font-medium text-foreground/90 hover:text-primary"
+          onClick={onItemClick}
+        >
+          {item.name}
+        </a>
+      </motion.div>
+    ))}
+  </div>
+);
+
+const UserMenu = ({ user, onLogout }: { user?: { name?: string }, onLogout: () => void }) => (
+  <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+      <Button variant="outline" size="sm" className="flex items-center gap-2">
+        <User size={14} />
+        {user?.name || 'Account'}
+      </Button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent align="end">
+      <DropdownMenuLabel>My Account</DropdownMenuLabel>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem asChild>
+        <Link to="/dashboard">Dashboard</Link>
+      </DropdownMenuItem>
+      <DropdownMenuItem asChild>
+        <Link to="/profile">Profile</Link>
+      </DropdownMenuItem>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem onClick={onLogout} className="text-destructive">
+        <LogOut className="mr-2 h-4 w-4" />
+        <span>Log out</span>
+      </DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+);
+
+const AuthButtons = ({ isMobile = false, onItemClick = () => {} }) => (
+  <div className="flex gap-x-2">
+    <Button variant="outline" size="sm" asChild>
+      <Link to="/sign-in" onClick={onItemClick}>
+        Log In
+      </Link>
+    </Button>
+    <Button size="sm" asChild>
+      <Link to="/sign-up" onClick={onItemClick}>
+        Get Started
+      </Link>
+    </Button>
+  </div>
+);
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -30,11 +137,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 10);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -44,6 +147,15 @@ const Navbar = () => {
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
+  const mobileMenuAnimation = {
+    initial: { opacity: 0, height: 0 },
+    animate: { opacity: 1, height: 'auto' },
+    exit: { opacity: 0, height: 0 },
+    transition: { duration: 0.3 }
   };
 
   return (
@@ -56,86 +168,24 @@ const Navbar = () => {
       )}
     >
       <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
-        <Link to="/" className="flex items-center space-x-2">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="font-bold text-2xl text-primary"
-          >
-            Pay<span className="text-blue-500">Mate</span>
-          </motion.div>
-        </Link>
-
-        {/* Desktop navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
-          {navItems.map((item, i) => (
-            <motion.div
-              key={item.name}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.1 * i }}
-            >
-              <a
-                href={item.href}
-                className="text-sm font-medium text-foreground/90 hover:text-primary transition-colors"
-              >
-                {item.name}
-              </a>
-            </motion.div>
-          ))}
-        </nav>
+        <NavLogo />
+        <DesktopNavItems />
 
         <div className="hidden md:flex items-center space-x-4">
           {isAuthenticated ? (
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
+              {...fadeInScale}
               transition={{ duration: 0.3, delay: 0.4 }}
             >
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="flex items-center gap-2">
-                    <User size={14} />
-                    {user?.name || 'Account'}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link to="/dashboard">Dashboard</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/profile">Profile</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="text-destructive">
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <UserMenu user={user} onLogout={handleLogout} />
             </motion.div>
           ) : (
             <>
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
+                {...fadeInScale}
                 transition={{ duration: 0.3, delay: 0.4 }}
               >
-                <Button variant="outline" size="sm" asChild>
-                  <Link to="/sign-in">Log In</Link>
-                </Button>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3, delay: 0.5 }}
-              >
-                <Button size="sm" asChild>
-                  <Link to="/sign-up">Get Started</Link>
-                </Button>
+                <AuthButtons />
               </motion.div>
             </>
           )}
@@ -145,6 +195,7 @@ const Navbar = () => {
         <button
           className="md:hidden focus:outline-none"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
         >
           {isMobileMenuOpen ? (
             <X className="h-6 w-6 text-primary" />
@@ -158,57 +209,28 @@ const Navbar = () => {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
+            {...mobileMenuAnimation}
             className="md:hidden bg-white/95 backdrop-blur-md"
           >
-            <div className="container mx-auto px-4 py-4 flex flex-col space-y-4">
-              {navItems.map((item, i) => (
-                <motion.div
-                  key={item.name}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.2, delay: 0.05 * i }}
-                >
-                  <a
-                    href={item.href}
-                    className="block py-2 text-base font-medium text-foreground/90 hover:text-primary"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {item.name}
-                  </a>
-                </motion.div>
-              ))}
-              <div className="pt-4 flex flex-col space-y-3">
-                {isAuthenticated ? (
-                  <>
-                    <Button variant="outline" size="sm" asChild>
-                      <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
-                        Dashboard
-                      </Link>
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={handleLogout}>
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Log out
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button variant="outline" size="sm" asChild>
-                      <Link to="/sign-in" onClick={() => setIsMobileMenuOpen(false)}>
-                        Log In
-                      </Link>
-                    </Button>
-                    <Button size="sm" asChild>
-                      <Link to="/sign-up" onClick={() => setIsMobileMenuOpen(false)}>
-                        Get Started
-                      </Link>
-                    </Button>
-                  </>
-                )}
-              </div>
+            <MobileNavItems onItemClick={closeMobileMenu} />
+            <div className="container mx-auto px-4 pt-4 flex flex-col space-y-3">
+              {isAuthenticated ? (
+                <div className="flex gap-x-4">
+                  <Button variant="outline" size="sm" asChild>
+                    <Link to="/dashboard" onClick={closeMobileMenu}>
+                      Dashboard
+                    </Link>
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Log out
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex flex-col space-y-3">
+                  <AuthButtons isMobile onItemClick={closeMobileMenu} />
+                </div>
+              )}
             </div>
           </motion.div>
         )}

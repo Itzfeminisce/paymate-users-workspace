@@ -14,16 +14,11 @@ import Sidebar from '@/components/layout/Sidebar';
 import Container from '@/components/layout/Container';
 
 export default function Appearance() {
-  const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const [theme, setTheme] = useState<string>("light");
   const [fontSize, setFontSize] = useState<string>("medium");
   const [colorScheme, setColorScheme] = useState<string>("blue");
 
-  // Redirect if not authenticated
-  if (!isAuthenticated) {
-    return <Navigate to="/sign-in" />;
-  }
 
   const handleThemeChange = (value: string) => {
     if (value) {

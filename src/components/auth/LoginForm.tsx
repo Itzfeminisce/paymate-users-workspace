@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
 import PasswordToggle from './PasswordToggle';
 import FormSubmitButton from './FormSubmitButton';
+import { handleAxiosError } from '@/utils/axios-error';
 
 // Form schema for login
 const loginSchema = z.object({
@@ -27,7 +28,7 @@ interface LoginFormProps {
 export default function LoginForm({ redirectTo }: LoginFormProps) {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { login, isLoading: authLoading } = useAuth();
+  const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   
@@ -51,19 +52,20 @@ export default function LoginForm({ redirectTo }: LoginFormProps) {
       });
       
       // Navigate to redirectTo after successful authentication
-      navigate(redirectTo);
+      navigate(redirectTo, { replace: true });
     } catch (error) {
       console.error('Authentication error:', error);
+      const errorResponse = handleAxiosError(error)
       toast({
-        title: 'Authentication failed',
-        description: 'Please check your credentials and try again.',
-        variant: 'destructive',
+        title: errorResponse.title || 'Authentication failed',
+        description: errorResponse.message || 'Please check your credentials and try again.',
+        variant: errorResponse.variant || 'destructive',
       });
     } finally {
       setIsLoading(false);
     }
   }
-  
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">

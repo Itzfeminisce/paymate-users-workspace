@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/form";
 import { UseFormReturn } from "react-hook-form";
 import { FundingFormValues } from "./types";
+import { formatCurrency } from "@/utils/utils";
+import { CheckCircle2 } from "lucide-react";
 
 interface AmountInputProps {
   form: UseFormReturn<FundingFormValues>;
@@ -34,7 +36,7 @@ export function AmountInput({ form }: AmountInputProps) {
                 <Input
                   {...field}
                   className="pl-8 text-lg font-semibold"
-                  placeholder="0.00"
+                  placeholder="NGN 0.00"
                 />
               </div>
             </FormControl>
@@ -50,13 +52,19 @@ export function AmountInput({ form }: AmountInputProps) {
             type="button"
             variant="outline"
             className="text-sm"
-            onClick={() => form.setValue('amount', amount)}
+            onClick={() => form.setValue('amount', +amount)}
           >
-            ₦{amount}
+            {form.watch('amount') === +amount ? (
+              <span className="flex items-center gap-2">
+               <CheckCircle2 className="h-5 w-5 text-primary" />
+                {formatCurrency(Number(amount))}
+              </span>
+            ) : (
+              formatCurrency(Number(amount))
+            )}
           </Button>
         ))}
       </div>
-      
       <FormField
         control={form.control}
         name="note"

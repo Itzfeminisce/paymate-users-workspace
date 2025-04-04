@@ -27,8 +27,8 @@ const Container: FC<ContainerProps> = ({ children, backButtonLocation, enableBac
                 >
                     {title && description && (
                         <motion.div variants={fadeUp}>
-                            <h1 className="text-3xl font-bold">{title}</h1>
-                            <p className="text-muted-foreground mt-2">
+                            <h1 className="text-xl md:text-3xl font-bold">{title}</h1>
+                            <p className="text-muted-foreground mt-2 md:text-base text-sm">
                                 {description}
                             </p>
                         </motion.div>

@@ -227,7 +227,7 @@ function ServiceSidebar({ activeService, setActiveService }) {
 }
 
 // Middle Column: Service Form
-function ServiceForm({ activeService, form, amountType, handleAmountTypeChange, handleClearForm }) {
+function ServiceForm({ activeService, form, amountType, handleAmountTypeChange }) {
   return (
     <GlassCard className="p-6 min-h-full space-y-6">
 
@@ -955,22 +955,13 @@ function ServiceForm({ activeService, form, amountType, handleAmountTypeChange, 
           </div>
         </>
       )}
-
-      {/* Clear Button */}
-      <Button
-        variant='destructive'
-        type="button"
-        onClick={handleClearForm}
-        className="mt-2 w-full"
-      >
-        Clear Form
-      </Button>
     </GlassCard>
   );
 }
 
 // Right Column: Summary Panel with Submit Button
-function SummaryPanel({ values }) {
+function SummaryPanel({ values, handleClearForm }) {
+  
   return (
     <GlassCard className="p-6 flex flex-col h-full">
       <h3 className="text-lg font-medium mb-4">Summary</h3>
@@ -993,6 +984,17 @@ function SummaryPanel({ values }) {
         <Button type="submit" className="w-full bg-gray-800 hover:bg-gray-700 text-white">
           Submit
         </Button>
+        
+
+      {/* Clear Button */}
+      <Button
+        variant='danger'
+        type="button"
+        onClick={handleClearForm}
+        className="mt-2 w-full"
+      >
+        Clear Form
+      </Button>
       </div>
     </GlassCard>
   );
@@ -1118,13 +1120,12 @@ export default function Services() {
                   form={form}
                   amountType={amountType}
                   handleAmountTypeChange={handleAmountTypeChange}
-                  handleClearForm={handleClearForm}
                 />
 
               </div>
               {/* Right Column: Summary Panel and Submit Button */}
               <div className="col-span-1">
-                <SummaryPanel values={relevantSummary} />
+                <SummaryPanel values={relevantSummary} handleClearForm={handleClearForm} />
               </div>
             </div>
           </form>

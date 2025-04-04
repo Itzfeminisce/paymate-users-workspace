@@ -19,7 +19,6 @@ import NavigateBack from '@/components/ui/navigate-back';
 import Container from '@/components/layout/Container';
 
 export default function PaymentMethods() {
-  const { user, isAuthenticated, logout } = useAuth();
   const { toast } = useToast();
   const [activeMethod, setActiveMethod] = useState<string | null>(null);
 
@@ -29,10 +28,7 @@ export default function PaymentMethods() {
     { id: 'card2', type: 'flutterwave', masked: '•••• •••• •••• 5555', expires: '09/26', default: false },
   ]);
 
-  // Redirect if not authenticated
-  if (!isAuthenticated) {
-    return <Navigate to="/sign-in" />;
-  }
+
 
   const handleSetDefault = (id: string) => {
     toast({

@@ -22,7 +22,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import FundWallet from "./pages/FundWallet";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-import AdminDashboard from "./pages/AdminDashboard";
+import AuthGuard from "./context/AuthGuard";
 
 const queryClient = new QueryClient();
 
@@ -47,16 +47,20 @@ const App = () => {
                 <Route path="/sign-up" element={<SignUp />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/transactions" element={<Transactions />} />
-                <Route path="/payment-methods" element={<PaymentMethods />} />
-                <Route path="/appearance" element={<Appearance />} />
-                <Route path="/messages" element={<Messages />} />
-                <Route path="/services" element={<Services />} />
-                <Route path="/fund-wallet" element={<FundWallet />} />
-                <Route path="/admin" element={<AdminDashboard />} />
+
+                {/* Protected Routes - wrapped in AuthGuard */}
+                <Route element={<AuthGuard />}>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/transactions" element={<Transactions />} />
+                  <Route path="/payment-methods" element={<PaymentMethods />} />
+                  <Route path="/appearance" element={<Appearance />} />
+                  <Route path="/messages" element={<Messages />} />
+                  <Route path="/services" element={<Services />} />
+                  <Route path="/fund-wallet/:reference?" element={<FundWallet />} />
+                </Route>
+
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

@@ -1,8 +1,9 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { fadeUp } from '@/lib/animations';
+import { useAuth } from '@/context/AuthContext';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -11,6 +12,13 @@ interface AuthLayoutProps {
 }
 
 export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
+  const { isAuthenticated } = useAuth();
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  
   return (
     <div className="flex min-h-screen flex-col justify-center py-12 md:pt-4 sm:px-6 lg:px-8 bg-gradient-to-b from-blue-50 to-white">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">

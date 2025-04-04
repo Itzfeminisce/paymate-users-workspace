@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import React, { Suspense, useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -16,21 +16,37 @@ import { WalletInfo } from '@/components/fund-wallet/wallet-info';
 import { ConfirmationDialog } from '@/components/fund-wallet/confirmation-dialog';
 import { fundingSchema, FundingFormValues } from '@/components/fund-wallet/types';
 import { Form } from '@/components/ui/form';
+import { useAxios } from '@/hooks/use-axios';
+import { ConfirmPaymentDialog } from '@/components/fund-wallet/confirm-payment-dialog';
+import { handleAxiosError } from '@/utils/axios-error';
+import { ToastAction } from '@/components/ui/toast';
+import { useTransactionError } from '@/hooks/use-api-response';
+import { useVerifyTransactionQuery } from '@/hooks/api-hooks';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+
 
 export default function FundWallet() {
-  const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  
+  const { Post } = useAxios();
+  const navigate = useNavigate();
+  const [searchParam, setSearchParam] = useSearchParams();
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [verificationStatus, setVerificationStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
+  const { handleTransactionError } = useTransactionError();
+  const { mutate: verifyTransactionMutation } = useVerifyTransactionQuery();
+  const queryClient = useQueryClient();
+
   const form = useForm<FundingFormValues>({
     resolver: zodResolver(fundingSchema),
     defaultValues: {
-      amount: "",
-      note: "",
+      amount: 100,
+      note: "Funding wallet",
     },
   });
-  
+
   const onSubmit = (data: FundingFormValues) => {
     if (!paymentMethod) {
       toast({
@@ -40,32 +56,99 @@ export default function FundWallet() {
       });
       return;
     }
-    
+
     setShowConfirmDialog(true);
   };
-  
-  const processPayment = () => {
+
+  const processPayment = async () => {
     toast({
       title: "Processing payment",
       description: "Your wallet will be funded shortly",
     });
-    
+
+    // TODO: Process payment
+    switch (paymentMethod) {
+      case "bank":
+        // TODO: Process bank payment
+        break;
+      case "paystack":
+        // TODO: Process paystack payment
+        const response = await Post('/wallets/transactions/initialize', {
+          amount: +form.getValues().amount,
+          callback_url: window.location.href,
+          note: form.getValues().note,
+          paymentMethod: paymentMethod,
+        });
+
+        const { authorization_url } = response.data;
+
+        window.location.href = authorization_url;
+
+        break;
+      case "flutterwave":
+        // TODO: Process flutterwave payment
+        break;
+      default:
+        toast({
+          title: "Invalid payment method",
+          description: "Please select a valid payment method",
+          variant: "destructive",
+        });
+        break;
+    }
+    // TODO: Update wallet balance
+    // TODO: Redirect to dashboard
+
     setShowConfirmDialog(false);
     form.reset();
     setPaymentMethod(null);
   };
-  
-  if (!isAuthenticated) {
-    return <Navigate to="/sign-in" />;
-  }
-  
+
+
+  useEffect(() => {
+    if (searchParam.has('reference')) {
+      const reference = searchParam.get("reference");
+      setIsVerifying(true);
+      setVerificationStatus('verifying');
+
+      const verifyTransaction = async () => {
+        try {
+          await verifyTransactionMutation({ reference });
+          await queryClient.invalidateQueries({ queryKey: ["wallet"] });
+          await queryClient.invalidateQueries({ queryKey: ["transactions"] });
+
+          setVerificationStatus('success');
+          toast({
+            title: "Payment Successful",
+            description: "Your wallet has been funded successfully",
+          });
+          
+          setSearchParam({});
+          navigate('/transactions');
+        } catch (error) {
+          setVerificationStatus('error');
+          handleTransactionError(error);
+        }
+      };
+      
+      verifyTransaction();
+    }
+  }, [searchParam, queryClient, verifyTransactionMutation, handleTransactionError, setSearchParam]);
+
+  const handleVerificationClose = () => {
+    setIsVerifying(false);
+    if (verificationStatus === 'success') {
+      navigate('/transactions');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Sidebar />
-      
-      <Container 
-        className="md:my-5 pt-20 md:pt-0" 
-        title="Fund Wallet" 
+
+      <Container
+        className="md:my-5 pt-20 md:pt-0"
+        title="Fund Wallet"
         description="Add money to your wallet to use for transactions"
         enableBackButton
       >
@@ -74,12 +157,12 @@ export default function FundWallet() {
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <AmountInput form={form} />
-                <PaymentMethods 
+                <PaymentMethods
                   paymentMethod={paymentMethod}
                   setPaymentMethod={setPaymentMethod}
                 />
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   className="w-full md:w-auto"
                   disabled={!form.formState.isValid}
                 >
@@ -88,12 +171,14 @@ export default function FundWallet() {
               </form>
             </Form>
           </motion.div>
-          
+
           <motion.div variants={fadeUp}>
-            <WalletInfo form={form} />
+            <Suspense fallback={<div>Loading...</div>}>
+              <WalletInfo form={form} />
+            </Suspense>
           </motion.div>
         </motion.div>
-        
+
         <ConfirmationDialog
           showConfirmDialog={showConfirmDialog}
           setShowConfirmDialog={setShowConfirmDialog}
@@ -102,6 +187,14 @@ export default function FundWallet() {
           onConfirm={processPayment}
         />
       </Container>
+
+      <ConfirmPaymentDialog
+        isOpen={isVerifying}
+        status={verificationStatus}
+        form={form}
+        reference={searchParam.get("reference") || undefined}
+        onClose={handleVerificationClose}
+      />
     </div>
   );
 }

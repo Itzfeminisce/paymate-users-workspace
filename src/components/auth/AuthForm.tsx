@@ -1,6 +1,4 @@
 
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import GlassCard from '@/components/ui/GlassCard';
 import LoginForm from './LoginForm';
@@ -14,6 +12,7 @@ interface AuthFormProps {
 }
 
 export function AuthForm({ type, redirectTo = '/' }: AuthFormProps) {
+  
   return (
     <motion.div
       variants={fadeUp}

@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
 import PasswordToggle from './PasswordToggle';
 import FormSubmitButton from './FormSubmitButton';
+import { handleAxiosError } from '@/utils/axios-error';
 
 // Form schema for signup with password confirmation
 const signupSchema = z.object({
@@ -56,13 +57,13 @@ export default function SignupForm({ redirectTo }: SignupFormProps) {
       });
       
       // Navigate to redirectTo after successful authentication
-      navigate(redirectTo);
+      navigate(redirectTo, { replace: true });
     } catch (error) {
-      console.error('Authentication error:', error);
+      const errorResponse = handleAxiosError(error);
       toast({
-        title: 'Account creation failed',
-        description: 'Please check your information and try again.',
-        variant: 'destructive',
+        title: errorResponse.title || 'Account creation failed',
+        description: errorResponse.message || 'Please check your information and try again.',
+        variant: errorResponse.variant || 'destructive'
       });
     } finally {
       setIsLoading(false);

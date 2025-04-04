@@ -20,7 +20,7 @@ export default defineConfig(({ command, mode }) => {
     },
     // Server configuration
     server: {
-      port: 8080,
+      port: 3000,
       open: true,
       host: true,
       proxy: {

@@ -1,17 +1,135 @@
-
 import React, { useState } from 'react'
-import { Navigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitials } from '@/lib/utils';
 import { useAuth } from '@/context/AuthContext';
 import { navItems } from '@/lib/configs';
 import { Button } from '@/components/ui/button';
-import { Bell, LogOut, Menu, Monitor, Moon, Settings, ShieldCheck, Sun, User, } from 'lucide-react';
+import { Bell, LogOut, Menu, ShieldCheck } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu";
-import { useTheme } from '@/context/ThemeContext';
-import ThemeToggle from "@/components/ui/theme-toggle"
 
+// Reusable user profile component
+const UserProfile = ({ user, size = "large" }) => {
+    const avatarSize = size === "large" ? "h-12 w-12" : "h-10 w-10";
+    
+    return (
+        <div className="flex items-center">
+            <Avatar className={avatarSize}>
+                <AvatarImage src={user?.profilePicture} />
+                <AvatarFallback className="bg-primary text-white">{getInitials(user.name)}</AvatarFallback>
+            </Avatar>
+            <div className="ml-3">
+                <p className="text-sm font-medium">{user?.name || 'User'}</p>
+                <p className="text-xs text-muted-foreground">{user?.email}</p>
+            </div>
+        </div>
+    );
+};
+
+// Reusable navigation component
+const Navigation = ({ items, isAdmin, onItemClick = () => {} }) => {
+    return (
+        <nav className="flex-1 px-2 py-4 space-y-1">
+            {items.map((item) => (
+                <Link
+                    key={item.title}
+                    to={item.path}
+                    className={`flex items-center px-4 py-3 text-sm rounded-md ${
+                        window.location.pathname === item.path
+                            ? 'bg-primary/10 text-primary'
+                            : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                    onClick={onItemClick}
+                >
+                    {item.icon}
+                    <span className="ml-3">{item.title}</span>
+                </Link>
+            ))}
+        </nav>
+    );
+};
+
+// Reusable logout button component
+const LogoutButton = ({ onLogout, className = "" }) => (
+    <Button
+        variant="outline"
+        className={`w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50 ${className}`}
+        onClick={onLogout}
+    >
+        <LogOut className="h-5 w-5 mr-2" />
+        Log out
+    </Button>
+);
+
+// Desktop sidebar component
+const DesktopSidebar = ({ user, isAdmin, logout }) => (
+    <div className="hidden md:flex w-64 flex-col fixed inset-y-0 z-10">
+        <div className="flex flex-col flex-grow bg-white shadow-md overflow-y-auto">
+            <div className="px-4 py-6 border-b">
+                <UserProfile user={user} size="large" />
+            </div>
+
+            <Navigation items={navItems} isAdmin={isAdmin} />
+
+            <div className="px-3 py-4 border-t">
+                <LogoutButton onLogout={logout} />
+                {/* <div className="mt-3">
+                    <ThemeToggle />
+                </div> */}
+            </div>
+        </div>
+    </div>
+);
+
+// Mobile sidebar component
+const MobileSidebar = ({ user, isAdmin, logout, isOpen, setIsOpen }) => (
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+        <SheetTrigger asChild>
+            <Button variant="ghost" size="icon">
+                <Menu className="h-6 w-6" />
+            </Button>
+        </SheetTrigger>
+        <SheetContent side="left" className="p-0">
+            <div className="flex items-center px-4 py-6 border-b">
+                <UserProfile user={user} size="small" />
+            </div>
+
+            <Navigation 
+                items={navItems} 
+                isAdmin={isAdmin} 
+                onItemClick={() => setIsOpen(false)} 
+            />
+
+            <div className="px-3 py-4 border-t">
+                <LogoutButton 
+                    onLogout={() => {
+                        logout();
+                        setIsOpen(false);
+                    }} 
+                />
+            </div>
+        </SheetContent>
+    </Sheet>
+);
+
+// Notifications dropdown component
+const NotificationsDropdown = () => (
+    <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon">
+                <Bell className="h-6 w-6" />
+            </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+                No new notifications
+            </DropdownMenuItem>
+        </DropdownMenuContent>
+    </DropdownMenu>
+);
 
 const Sidebar = () => {
     const { user, isAuthenticated, logout } = useAuth();
@@ -20,155 +138,26 @@ const Sidebar = () => {
     // In a real app, this would be determined by the user's role
     const isAdmin = true; // For demo purposes, everyone can access admin dashboard
 
-    if (!isAuthenticated) return null
+    if (!isAuthenticated) return null;
+    
     return (
         <div>
             {/* Desktop Sidebar */}
-            <div className="hidden md:flex w-64 flex-col fixed inset-y-0 z-10">
-                <div className="flex flex-col flex-grow bg-white shadow-md overflow-y-auto">
-                    <div className="flex items-center px-4 py-6 border-b">
-                        <Avatar className="h-12 w-12">
-                            <AvatarImage src={user?.profilePicture} />
-                            <AvatarFallback className="bg-primary text-white">{getInitials(user.name)}</AvatarFallback>
-                        </Avatar>
-                        <div className="ml-3">
-                            <p className="text-sm font-medium">{user?.name || 'User'}</p>
-                            <p className="text-xs text-muted-foreground">{user?.email}</p>
-                        </div>
-                    </div>
-
-                    <nav className="flex-1 px-2 py-4 space-y-1">
-                        {navItems.map((item) => (
-                            <Link
-                                key={item.title}
-                                to={item.path}
-                                className={`flex items-center px-4 py-3 text-sm rounded-md ${window.location.pathname === item.path
-                                    ? 'bg-primary/10 text-primary'
-                                    : 'text-gray-700 hover:bg-gray-100'
-                                    }`}
-                            >
-                                {item.icon}
-                                <span className="ml-3">{item.title}</span>
-                            </Link>
-                        ))}
-                        
-                        {/* Admin Dashboard Link - Only visible to admins */}
-                        {isAdmin && (
-                            <Link
-                                to="/admin"
-                                className={`flex items-center px-4 py-3 text-sm rounded-md ${
-                                    window.location.pathname === '/admin'
-                                    ? 'bg-primary/10 text-primary'
-                                    : 'text-gray-700 hover:bg-gray-100'
-                                }`}
-                            >
-                                <ShieldCheck className="h-5 w-5" />
-                                <span className="ml-3">Admin Dashboard</span>
-                            </Link>
-                        )}
-                    </nav>
-
-                    <div className="px-3 py-4 border-t">
-                        <Button
-                            variant="outline"
-                            className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50"
-                            onClick={logout}
-                        >
-                            <LogOut className="h-5 w-5 mr-2" />
-                            Log out
-                        </Button>
-
-                        {/* Theme Toggle Dropdown */}
-                        {/* <ThemeToggle /> */}
-                    </div>
-                </div>
-            </div>
+            <DesktopSidebar user={user} isAdmin={isAdmin} logout={logout} />
 
             {/* Mobile Header */}
             <div className="md:hidden fixed top-0 inset-x-0 z-10 flex items-center justify-between h-16 px-4 bg-white border-b">
-                <Sheet open={isMobileSidebarOpen} onOpenChange={setIsMobileSidebarOpen}>
-                    <SheetTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                            <Menu className="h-6 w-6" />
-                        </Button>
-                    </SheetTrigger>
-                    <SheetContent side="left" className="p-0">
-                        <div className="flex items-center px-4 py-6 border-b">
-                            <Avatar className="h-10 w-10">
-                                <AvatarImage src={user?.profilePicture} />
-                                <AvatarFallback className="bg-primary text-white">{getInitials(user.name)}</AvatarFallback>
-                            </Avatar>
-                            <div className="ml-3">
-                                <p className="text-sm font-medium">{user?.name || 'User'}</p>
-                                <p className="text-xs text-muted-foreground">{user?.email}</p>
-                            </div>
-                        </div>
-
-                        <nav className="flex-1 px-2 py-4 space-y-1">
-                            {navItems.map((item) => (
-                                <Link
-                                    key={item.title}
-                                    to={item.path}
-                                    className={`flex items-center px-4 py-3 text-sm rounded-md ${window.location.pathname === item.path
-                                        ? 'bg-primary/10 text-primary'
-                                        : 'text-gray-700 hover:bg-gray-100'
-                                        }`}
-                                    onClick={() => setIsMobileSidebarOpen(false)}
-                                >
-                                    {item.icon}
-                                    <span className="ml-3">{item.title}</span>
-                                </Link>
-                            ))}
-                            
-                            {/* Admin Dashboard Link - Only visible to admins */}
-                            {isAdmin && (
-                                <Link
-                                    to="/admin"
-                                    className={`flex items-center px-4 py-3 text-sm rounded-md ${
-                                        window.location.pathname === '/admin'
-                                        ? 'bg-primary/10 text-primary'
-                                        : 'text-gray-700 hover:bg-gray-100'
-                                    }`}
-                                    onClick={() => setIsMobileSidebarOpen(false)}
-                                >
-                                    <ShieldCheck className="h-5 w-5" />
-                                    <span className="ml-3">Admin Dashboard</span>
-                                </Link>
-                            )}
-                        </nav>
-
-                        <div className="px-3 py-4 border-t">
-                            <Button
-                                variant="outline"
-                                className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50"
-                                onClick={() => {
-                                    logout();
-                                    setIsMobileSidebarOpen(false);
-                                }}
-                            >
-                                <LogOut className="h-5 w-5 mr-2" />
-                                Log out
-                            </Button>
-                        </div>
-                    </SheetContent>
-                </Sheet>
+                <MobileSidebar 
+                    user={user} 
+                    isAdmin={isAdmin} 
+                    logout={logout} 
+                    isOpen={isMobileSidebarOpen} 
+                    setIsOpen={setIsMobileSidebarOpen} 
+                />
 
                 <h1 className="text-lg font-bold">VTULink</h1>
-
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                            <Bell className="h-6 w-6" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>
-                            No new notifications
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                
+                <NotificationsDropdown />
             </div>
         </div>
     )

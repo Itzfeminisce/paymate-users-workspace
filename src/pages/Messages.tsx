@@ -25,7 +25,6 @@ type Message = {
 };
 
 export default function Messages() {
-  const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<'chat' | 'email'>('chat');
   const [newMessage, setNewMessage] = useState('');
@@ -58,10 +57,6 @@ export default function Messages() {
     },
   ]);
 
-  // Redirect if not authenticated
-  if (!isAuthenticated) {
-    return <Navigate to="/sign-in" />;
-  }
 
   const handleSendMessage = () => {
     if (!newMessage.trim()) return;

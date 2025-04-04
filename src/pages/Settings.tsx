@@ -13,12 +13,6 @@ import NavigateBack from '@/components/ui/navigate-back';
 import Container from '@/components/layout/Container';
 
 export default function Settings() {
-  const { isAuthenticated } = useAuth();
-
-  // Redirect if not authenticated
-  if (!isAuthenticated) {
-    return <Navigate to="/sign-in" />;
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20 md:pt-5 pb-16">
