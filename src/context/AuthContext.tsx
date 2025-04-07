@@ -1,16 +1,19 @@
 import { toast } from '@/components/ui/use-toast';
-import { useGetUserQuery, User } from '@/hooks/api-hooks';
+import {  User } from '@/hooks/api-hooks';
 import { useAxios } from '@/hooks/use-axios';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { handleAxiosError } from '@/utils/axios-error';
+import { useQueryClient } from '@tanstack/react-query';
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { redirect } from 'react-router-dom';
 
+export const STORAGE_KEY = '__paymate_user';
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: ({ name, email, password }: { name: string, email: string, password: string }) => Promise<void>;
+  signup: ({ name, email, password, referral_code }: { name: string, email: string, password: string, referral_code: string }) => Promise<void>;
   logout: () => void;
   requestPasswordReset: (email: string) => Promise<void>;
   resetPassword: (email: string, otp: string, newPassword: string) => Promise<void>;
@@ -19,10 +22,10 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-
-  const [_store, _setStore, _deleteStore] = useLocalStorage<User | null>('__paymate_user', null);
+  const { value: _store, setValue: _setStore, deleteValue: _deleteStore, clear: _clearStore } = useLocalStorage<User | null>(STORAGE_KEY, null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!_store);
   const [user, setUser] = useState<User | null>(_store);
+  const queryClient = useQueryClient();
   
   const [isLoading, setIsLoading] = useState(false);
 
@@ -45,6 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         name: user.name,
         phone_number: user.phone_number || '',
         profilePicture: user.profile_picture,
+        referral_id: `${window.location.origin}/sign-up?ref=${user.referral_id}`,
         token: user.accessToken
       };
 
@@ -52,19 +56,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       _setStore(userData);
       setUser(userData);
       setIsAuthenticated(true);
+      redirect('/dashboard');
     } finally {
       setIsLoading(false);
     }
   };
 
   // Signup function
-  const signup = async ({ name, email, password }: { name: string, email: string, password: string }) => {
+  const signup = async ({ name, email, password, referral_code }: { name: string, email: string, password: string, referral_code: string }) => {
     setIsLoading(true);
     try {
       const response = await Post('/users/customer/signup', {
         name,
         email,
-        password
+        password,
+        referral_code
       });
 
       const user = response.data;
@@ -75,12 +81,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         name: user.name,
         phone_number: user.phone_number || '',
         profilePicture: user.profile_picture,
+        referral_id: `${window.location.origin}/sign-up?ref=${user.referral_id}`,
         token: user.accessToken
       };
 
       _setStore(userData);
       setUser(userData);
       setIsAuthenticated(true);
+      redirect('/dashboard');
     } finally {
       setIsLoading(false);
     }
@@ -91,14 +99,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const response = await Post('/users/customer/logout', {});
 
-      if (response.status === 200) {
+      if (response.statusCode === 200) {
+
+        // invalidate ALL query cache
+        await queryClient.invalidateQueries();
+
+
         toast({
           title: 'Logout successful',
           description: 'You have been logged out successfully',
         });
       }
-      // Use a more controlled redirect method
-      window.location.href = '/sign-in';
+
+      redirect('/sign-in');
     } catch (error) {
       const errorResponse = handleAxiosError(error);
       toast({
@@ -109,7 +122,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     } finally {
       // Still clear local state even if API fails
-      _deleteStore();
+      _clearStore();
       setUser(null);
       setIsAuthenticated(false);
     }

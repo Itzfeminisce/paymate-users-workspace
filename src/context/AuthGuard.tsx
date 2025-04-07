@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
+import Sidebar from '@/components/layout/Sidebar';
 
 
 const AuthGuard: React.FC = () => {
@@ -18,7 +19,14 @@ const AuthGuard: React.FC = () => {
   }
 
 
-  return <Outlet />;
+//   return <Outlet />;
+
+  return (
+    <div className="min-h-screen bg-gray-50 pb-16">
+      <Sidebar />
+      <Outlet />
+    </div>
+  )
 };
 
 export default AuthGuard;

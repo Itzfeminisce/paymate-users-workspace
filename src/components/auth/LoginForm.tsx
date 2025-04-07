@@ -78,6 +78,38 @@ export default function LoginForm({ redirectTo }: LoginFormProps) {
               <FormControl>
                 <Input placeholder="your.email@example.com" {...field} />
               </FormControl>
+              <div className="flex justify-end gap-2 mt-1">
+                <button
+                  type="button"
+                  className="text-xs text-muted-foreground hover:text-primary"
+                  onClick={() => {
+                    const username = field.value.split('@')[0];
+                    if (username) field.onChange(`${username}@gmail.com`);
+                  }}
+                >
+                  @gmail.com
+                </button>
+                <button
+                  type="button"
+                  className="text-xs text-muted-foreground hover:text-primary"
+                  onClick={() => {
+                    const username = field.value.split('@')[0];
+                    if (username) field.onChange(`${username}@yahoo.com`);
+                  }}
+                >
+                  @yahoo.com
+                </button>
+                <button
+                  type="button"
+                  className="text-xs text-muted-foreground hover:text-primary"
+                  onClick={() => {
+                    const username = field.value.split('@')[0];
+                    if (username) field.onChange(`${username}@outlook.com`);
+                  }}
+                >
+                  @outlook.com
+                </button>
+              </div>
               <FormMessage />
             </FormItem>
           )}

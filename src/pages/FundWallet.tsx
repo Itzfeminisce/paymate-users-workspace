@@ -122,7 +122,7 @@ export default function FundWallet() {
             title: "Payment Successful",
             description: "Your wallet has been funded successfully",
           });
-          
+
           setSearchParam({});
           navigate('/transactions');
         } catch (error) {
@@ -130,10 +130,10 @@ export default function FundWallet() {
           handleTransactionError(error);
         }
       };
-      
+
       verifyTransaction();
     }
-  }, [searchParam, queryClient, verifyTransactionMutation, handleTransactionError, setSearchParam]);
+  }, [searchParam]);
 
   const handleVerificationClose = () => {
     setIsVerifying(false);
@@ -143,9 +143,7 @@ export default function FundWallet() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Sidebar />
-
+    <>
       <Container
         className="md:my-5 pt-20 md:pt-0"
         title="Fund Wallet"
@@ -195,6 +193,6 @@ export default function FundWallet() {
         reference={searchParam.get("reference") || undefined}
         onClose={handleVerificationClose}
       />
-    </div>
+    </>
   );
 }

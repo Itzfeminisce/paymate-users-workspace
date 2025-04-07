@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getInitials } from '@/lib/utils';
@@ -8,6 +8,7 @@ import { navItems } from '@/lib/configs';
 import { Button } from '@/components/ui/button';
 import { Bell, LogOut, Menu, ShieldCheck } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu";
+import { User } from '@/hooks/api-hooks';
 
 // Reusable user profile component
 const UserProfile = ({ user, size = "large" }) => {
@@ -28,7 +29,8 @@ const UserProfile = ({ user, size = "large" }) => {
 };
 
 // Reusable navigation component
-const Navigation = ({ items, isAdmin, onItemClick = () => {} }) => {
+const Navigation = ({ items, onItemClick = () => {} }) => {
+    const location = useLocation();
     return (
         <nav className="flex-1 px-2 py-4 space-y-1">
             {items.map((item) => (
@@ -36,7 +38,7 @@ const Navigation = ({ items, isAdmin, onItemClick = () => {} }) => {
                     key={item.title}
                     to={item.path}
                     className={`flex items-center px-4 py-3 text-sm rounded-md ${
-                        window.location.pathname === item.path
+                        location.pathname === item.path
                             ? 'bg-primary/10 text-primary'
                             : 'text-gray-700 hover:bg-gray-100'
                     }`}
@@ -63,14 +65,14 @@ const LogoutButton = ({ onLogout, className = "" }) => (
 );
 
 // Desktop sidebar component
-const DesktopSidebar = ({ user, isAdmin, logout }) => (
+const DesktopSidebar = ({ user, logout }: { user: User, logout: () => void }) => (
     <div className="hidden md:flex w-64 flex-col fixed inset-y-0 z-10">
         <div className="flex flex-col flex-grow bg-white shadow-md overflow-y-auto">
             <div className="px-4 py-6 border-b">
                 <UserProfile user={user} size="large" />
             </div>
 
-            <Navigation items={navItems} isAdmin={isAdmin} />
+            <Navigation items={navItems} />
 
             <div className="px-3 py-4 border-t">
                 <LogoutButton onLogout={logout} />
@@ -83,7 +85,7 @@ const DesktopSidebar = ({ user, isAdmin, logout }) => (
 );
 
 // Mobile sidebar component
-const MobileSidebar = ({ user, isAdmin, logout, isOpen, setIsOpen }) => (
+const MobileSidebar = ({ user, logout, isOpen, setIsOpen }) => (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
             <Button variant="ghost" size="icon">
@@ -97,7 +99,6 @@ const MobileSidebar = ({ user, isAdmin, logout, isOpen, setIsOpen }) => (
 
             <Navigation 
                 items={navItems} 
-                isAdmin={isAdmin} 
                 onItemClick={() => setIsOpen(false)} 
             />
 
@@ -132,24 +133,18 @@ const NotificationsDropdown = () => (
 );
 
 const Sidebar = () => {
-    const { user, isAuthenticated, logout } = useAuth();
+    const { user, logout } = useAuth();
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
-    // In a real app, this would be determined by the user's role
-    const isAdmin = true; // For demo purposes, everyone can access admin dashboard
-
-    if (!isAuthenticated) return null;
-    
     return (
         <div>
             {/* Desktop Sidebar */}
-            <DesktopSidebar user={user} isAdmin={isAdmin} logout={logout} />
+            <DesktopSidebar user={user} logout={logout} />
 
             {/* Mobile Header */}
             <div className="md:hidden fixed top-0 inset-x-0 z-10 flex items-center justify-between h-16 px-4 bg-white border-b">
                 <MobileSidebar 
                     user={user} 
-                    isAdmin={isAdmin} 
                     logout={logout} 
                     isOpen={isMobileSidebarOpen} 
                     setIsOpen={setIsMobileSidebarOpen} 

@@ -5,3 +5,11 @@ export const formatCurrency = (amount: number, currency?: string) => {
         minimumFractionDigits: 2,
     }).format(amount);
 };
+
+export const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat('en-NG', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    }).format(date);
+};

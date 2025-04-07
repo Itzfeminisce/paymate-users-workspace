@@ -118,10 +118,6 @@ export default function Messages() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20 md:pt-5 pb-16">
-      {/* Desktop Sidebar */}
-      <Sidebar />
-
       <Container description='Get help from our support team' title='Support'>
         <motion.div variants={fadeUp}>
           <div className="flex space-x-4 mb-6">
@@ -323,6 +319,5 @@ export default function Messages() {
           </GlassCard>
         </motion.div>
       </Container>
-    </div>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Menu, X, LogOut, User } from 'lucide-react';
@@ -20,6 +20,7 @@ const navItems = [
   { name: 'Services', href: '#services' },
   { name: 'How It Works', href: '#how-it-works' },
   { name: 'Pricing', href: '#pricing' },
+  { name: 'Contact', href: '/contact' },
 ];
 
 // Animation variants for reuse
@@ -48,24 +49,73 @@ const NavLogo = () => (
   </Link>
 );
 
-const DesktopNavItems = () => (
-  <nav className="hidden md:flex items-center space-x-8">
-    {navItems.map((item, i) => (
-      <motion.div
-        key={item.name}
-        {...fadeInY}
-        transition={{ duration: 0.3, delay: 0.1 * i }}
-      >
-        <a
-          href={item.href}
-          className="text-sm font-medium text-foreground/90 hover:text-primary transition-colors"
+// const DesktopNavItems = () => (
+//   <nav className="hidden md:flex items-center space-x-8">
+//     {navItems.map((item, i) => (
+//       <motion.div
+//         key={item.name}
+//         {...fadeInY}
+//         transition={{ duration: 0.3, delay: 0.1 * i }}
+//       >
+//         <Link
+//           to={item.href}
+//           className="text-sm font-medium text-foreground/90 hover:text-primary transition-colors"
+//         >
+//           {item.name}
+//         </Link>
+//       </motion.div>
+//     ))}
+//   </nav>
+// );
+
+const DesktopNavItems = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  // Function to handle all navigation
+  const handleNavigation = (e, href) => {
+    e.preventDefault();
+    
+    // Check if it's a hash link
+    if (href.includes('#')) {
+      const hash = href.substring(href.indexOf('#'));
+      
+      // If we're already on the home page, just scroll
+      if (location.pathname === '/' || location.pathname === '') {
+        const element = document.querySelector(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else {
+        // If we're on another page, navigate to home first, then scroll
+        navigate('/', { state: { scrollTo: hash } });
+      }
+    } else {
+      // Regular page navigation
+      navigate(href);
+    }
+  };
+
+  return (
+    <nav className="hidden md:flex items-center space-x-8">
+      {navItems.map((item, i) => (
+        <motion.div
+          key={item.name}
+          {...fadeInY}
+          transition={{ duration: 0.3, delay: 0.1 * i }}
         >
-          {item.name}
-        </a>
-      </motion.div>
-    ))}
-  </nav>
-);
+          <a
+            href={item.href}
+            className="text-sm font-medium text-foreground/90 hover:text-primary transition-colors"
+            onClick={(e) => handleNavigation(e, item.href)}
+          >
+            {item.name}
+          </a>
+        </motion.div>
+      ))}
+    </nav>
+  );
+};
 
 const MobileNavItems = ({ onItemClick }: { onItemClick: () => void }) => (
   <div className="container mx-auto px-4 py-4 flex flex-col space-y-4">
@@ -114,7 +164,7 @@ const UserMenu = ({ user, onLogout }: { user?: { name?: string }, onLogout: () =
   </DropdownMenu>
 );
 
-const AuthButtons = ({ isMobile = false, onItemClick = () => {} }) => (
+const AuthButtons = ({ isMobile = false, onItemClick = () => { } }) => (
   <div className="flex gap-x-2">
     <Button variant="outline" size="sm" asChild>
       <Link to="/sign-in" onClick={onItemClick}>

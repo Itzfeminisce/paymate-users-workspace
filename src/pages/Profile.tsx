@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useAuth } from '@/context/AuthContext';
+import { STORAGE_KEY, useAuth } from '@/context/AuthContext';
 import GlassCard from '@/components/ui/GlassCard';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -24,10 +24,9 @@ import { useLocalStorage } from '@/hooks/use-local-storage';
 
 
 export default function Profile() {
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
   const { toast } = useToast();
-  const navigate = useNavigate();
-  const [,setLstorage] = useLocalStorage<User>("user", localStorage.getItem('user') as unknown as User)
+  const { setValue: setLstorage } = useLocalStorage<User>(STORAGE_KEY)
   const queryClient = useQueryClient();
 
   const form = useForm<ProfileFormValues>({
@@ -47,12 +46,11 @@ export default function Profile() {
         profilePicture: data.profilePicture
       });
 
-      console.log({uploadedProfilePicture: response});
-
       const profilePicture = response.profile_picture_url;
+      await queryClient.invalidateQueries({ queryKey: ["users:me"] });
+
       // Update profile picture in local storage
       setLstorage(it => ({...it, profilePicture}));
-      await queryClient.invalidateQueries({ queryKey: ["users:me"] });
       toast({
         title: "Success",
         description: "Profile updated successfully",
@@ -67,11 +65,6 @@ export default function Profile() {
     }
   };
 
-  // Redirect if not authenticated
-  if (!isAuthenticated) {
-    navigate("/sign-in");
-    return;
-  }
 
   // Generate user avatar initials
   const getInitials = () => {
@@ -83,10 +76,6 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20 md:pt-5 pb-16">
-      {/* Desktop Sidebar */}
-      <Sidebar />
-
       <Container title='My Profile' description='View and update your profile information'>
         <motion.div variants={staggerContainer} className="space-y-6">
           <motion.div variants={fadeUp}>
@@ -103,6 +92,5 @@ export default function Profile() {
           </motion.div>
         </motion.div>
       </Container>
-    </div>
   );
 }

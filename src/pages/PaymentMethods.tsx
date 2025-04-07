@@ -54,12 +54,6 @@ export default function PaymentMethods() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20 md:pt-5 pb-16">
-
-
-      {/* Desktop Sidebar */}
-      <Sidebar />
-
       <Container enableBackButton title='Payment Methods' description='Manage your payment methods and preferences'>
         {/* Existing payment methods */}
         <motion.div variants={fadeUp}>
@@ -219,9 +213,5 @@ export default function PaymentMethods() {
         </motion.div>
 
       </Container>
-
-
-
-    </div>
   );
 }

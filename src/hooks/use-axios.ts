@@ -1,8 +1,10 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { toast, useToast } from '@/hooks/use-toast';
 import { ENV } from '@/utils/env';
-import { useAuth } from '@/context/AuthContext';
 import { handleAxiosError } from '@/utils/axios-error';
+import { redirect } from 'react-router-dom';
+import { useLocalStorage } from './use-local-storage';
+import { STORAGE_KEY } from '@/context/AuthContext';
 
 // Default config for axios instance
 const defaultConfig: AxiosRequestConfig = {
@@ -49,15 +51,17 @@ export const axiosInstance = createAxiosInstance();
 
 // Hook for using axios with authentication
 export const useAxios = () => {
-    // const { user, logout } = useAuth();
-    // const { toast } = useToast();
-    const token = (JSON.parse(localStorage.getItem('__paymate_user') || '{}'))?.token;
 
     // Create a new instance with auth headers
     const authAxios = createAxiosInstance();
 
     // Add auth token to requests
     authAxios.interceptors.request.use((config) => {
+        // how will this look like in the local storage?
+        // __paymate_user
+        // __paymate_user.token
+        const token = (JSON.parse(localStorage.getItem('__paymate_') || '{}'))?.__paymate_user?.token;
+
         if (token && config.headers) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -76,27 +80,18 @@ export const useAxios = () => {
                 variant: errorResponse.variant,
             });
 
-            // const status = error.response?.status;
 
-            // // Handle authentication errors
-            // if (status === 401) {
-            //     toast({
-            //         title: "Session expired",
-            //         description: "Please sign in again to continue",
-            //         variant: "destructive",
-            //     });
+            // Handle 401 Unauthorized errors
+            if (errorResponse.statusCode === 401) {
+                // Clear user data from localStorage
+                localStorage.clear()
+        
+                // Redirect to login page
+                window.location.href = '/sign-in'
+                return;
+            }
 
-            //     // logout();
-            // }
 
-            // // Handle server errors
-            // if (status === 500) {
-            //     toast({
-            //         title: "Server error",
-            //         description: "Something went wrong. Please try again later.",
-            //         variant: "destructive",
-            //     });
-            // }
 
             return Promise.reject(error);
         }

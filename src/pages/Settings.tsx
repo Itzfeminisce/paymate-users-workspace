@@ -15,10 +15,6 @@ import Container from '@/components/layout/Container';
 export default function Settings() {
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20 md:pt-5 pb-16">
-      {/* Desktop Sidebar */}
-      <Sidebar />
-
       <Container description='Manage your application preferences and account settings' title='Settings'>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -111,8 +107,5 @@ export default function Settings() {
           </div>
         </div>
       </Container>
-
-
-    </div>
   );
 }

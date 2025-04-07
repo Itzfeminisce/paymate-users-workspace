@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -28,50 +27,44 @@ const Hero = () => {
           >
             <div className="inline-flex items-center px-3 py-1.5 mb-6 text-xs font-medium rounded-full bg-blue-50 text-blue-500 border border-blue-100 shadow-sm">
               <span className="mr-1.5 h-2 w-2 rounded-full bg-blue-500 animate-pulse"></span>
-              The most reliable VTU service provider
+              Trusted by over 50,000+ users nationwide
             </div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6 leading-tight">
-              Recharge <span className="text-blue-500">seamlessly</span>. Pay <span className="text-blue-500">effortlessly</span>.
+              Your One-Stop Solution for <span className="text-blue-500">Digital Payments</span>
             </h1>
 
             <p className="text-lg text-muted-foreground mb-8 max-w-md">
-              Experience the fastest and most reliable virtual top-up service for airtime, data bundles, cable TV, and electricity bills.
+              Save up to 5% on bills & recharges. Experience instant delivery, 24/7 support, and the most competitive rates in Nigeria.
             </p>
 
             <div className="flex flex-wrap gap-4">
               <Button size="lg" asChild className="group">
                 <Link to={isAuthenticated ? "/dashboard" : "/sign-up"}>
+                  Start Saving Now
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  Get Started
                 </Link>
               </Button>
               <Button size="lg" asChild variant="outline">
-                <a href={"/#services"}>
-                  Learn More
+                <a href="#pricing">
+                  View Our Rates
                 </a>
-
               </Button>
             </div>
 
-            <div className="mt-12 flex items-center space-x-6">
-              <div className="flex items-center space-x-2">
-                <div className="h-10 w-10 rounded-full bg-green-50 flex items-center justify-center text-green-500">
-                  <PhoneIcon className="h-5 w-5" />
-                </div>
-                <span className="text-sm font-medium">Airtime Topup</span>
+            {/* Trust indicators */}
+            <div className="mt-12 grid grid-cols-3 gap-6">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-500">99.9%</div>
+                <div className="text-sm text-muted-foreground">Success Rate</div>
               </div>
-              <div className="flex items-center space-x-2">
-                <div className="h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-500">
-                  <Zap className="h-5 w-5" />
-                </div>
-                <span className="text-sm font-medium">Data Bundles</span>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-500">50K+</div>
+                <div className="text-sm text-muted-foreground">Active Users</div>
               </div>
-              <div className="flex items-center space-x-2">
-                <div className="h-10 w-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-500">
-                  <CreditCard className="h-5 w-5" />
-                </div>
-                <span className="text-sm font-medium">Bill Payments</span>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-500">24/7</div>
+                <div className="text-sm text-muted-foreground">Support</div>
               </div>
             </div>
           </motion.div>

@@ -1,5 +1,4 @@
-
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -7,6 +6,8 @@ import Hero from '@/components/home/Hero';
 import Features from '@/components/home/Features';
 import HowItWorks from '@/components/home/HowItWorks';
 import Pricing from '@/components/home/Pricing';
+import FAQ from '@/components/home/FAQ';
+import { useLocation } from 'react-router-dom';
 
 const pageVariants = {
   initial: {
@@ -27,6 +28,12 @@ const pageTransition = {
 };
 
 const Index = () => {
+  
+  const location = useLocation();
+  const initialRender = useRef(true);
+  
+
+
   useEffect(() => {
     // Smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -59,6 +66,21 @@ const Index = () => {
     };
   }, []);
 
+  useEffect(() => {
+    // Check if we have a scrollTo state from navigation
+    // @ts-ignore
+    if (location.state?.scrollTo && (initialRender.current || location.action === 'PUSH')) {
+      const element = document.querySelector(location.state.scrollTo);
+      if (element) {
+        // Small timeout to ensure the page has fully rendered
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+      initialRender.current = false;
+    }
+  }, [location]);
+
   return (
     <AnimatePresence mode="wait">
       <motion.div
@@ -76,6 +98,7 @@ const Index = () => {
           <Features />
           <HowItWorks />
           <Pricing />
+          <FAQ />
         </main>
         
         <Footer />

@@ -19,6 +19,8 @@ import {
 } from '@/components/ui/table';
 import { useNavigate } from 'react-router-dom';
 import { TooltipContent } from "@radix-ui/react-tooltip";
+import { TransactionFilters, type TransactionFilters as Filters } from './transaction-filters';
+import { TransactionPagination } from './transaction-pagination';
 
 export enum TransactionType {
     DEPOSIT = 'deposit',
@@ -30,9 +32,16 @@ export enum TransactionType {
 
 
 interface TransactionHistoryProps {
-    limit?: number;
+    transactions?: Transaction[];
+    isLoading?: boolean;
     showViewAllButton?: boolean;
     renderIfEmpty?: () => React.ReactNode;
+    onFiltersChange?: (filters: Filters) => void;
+    pagination?: {
+        currentPage: number;
+        totalPages: number;
+        onPageChange: (page: number) => void;
+    };
 }
 
 // RetryButton component
@@ -64,44 +73,106 @@ const RetryButton = ({ transactionRef }: { transactionRef: string }) => {
 };
 
 export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
-    limit = 2,
+    transactions = [],
+    isLoading = false,
     showViewAllButton = false,
     renderIfEmpty,
+    onFiltersChange,
+    pagination,
 }) => {
-    const { data: transactions = [], isLoading } = useGetTransactionHistoryQuery(limit);
+    const [filters, setFilters] = React.useState<Filters>({
+        search: '',
+        status: 'all',
+        dateRange: {
+            from: undefined,
+            to: undefined,
+        },
+    });
+
+    const handleFiltersChange = (newFilters: Filters) => {
+        setFilters(newFilters);
+        onFiltersChange?.(newFilters);
+    };
 
     if (isLoading) {
         return <TransactionHistorySkeleton />;
     }
 
-    if (transactions.length === 0 && renderIfEmpty) {
-        return renderIfEmpty();
-    }
-
     return (
         <motion.div variants={fadeUp}>
             <GlassCard className="p-4 sm:p-6">
-                <h3 className="text-lg font-medium mb-4">Recent Transactions</h3>
-                <div className="overflow-x-auto">
-                    <Table>
-                        <TableHeader className="hidden sm:table-header-group">
-                            <TableRow>
-                                <TableHead>Reference</TableHead>
-                                <TableHead className="hidden md:table-cell">Description</TableHead>
-                                <TableHead>Amount</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead className="hidden md:table-cell">Date</TableHead>
-                                <TableHead className="text-right">Actions</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {transactions.map((transaction) => (
-                                <TableRow key={transaction.id} className="group hover:bg-gray-50/50 transition-colors">
-                                    {/* Mobile view - card style */}
-                                    <TableCell className="sm:hidden p-3" colSpan={6}>
-                                        <div className="flex flex-col space-y-2">
-                                            <div className="flex justify-between items-center">
-                                                <span className="font-medium text-sm truncate max-w-[150px]">{transaction.reference}</span>
+                <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-lg font-medium">Recent Transactions</h3>
+                </div>
+
+                {transactions.length === 0 ? renderIfEmpty?.() : (
+                    <>
+                        {pagination && <TransactionFilters
+                            filters={filters}
+                            onFiltersChange={handleFiltersChange}
+                        />}
+
+
+                        <div className="overflow-x-auto">
+                            <Table>
+                                <TableHeader className="hidden sm:table-header-group">
+                                    <TableRow>
+                                        <TableHead>Reference</TableHead>
+                                        <TableHead className="hidden md:table-cell">Description</TableHead>
+                                        <TableHead>Amount</TableHead>
+                                        <TableHead>Status</TableHead>
+                                        <TableHead className="hidden md:table-cell">Date</TableHead>
+                                        <TableHead className="text-right">Actions</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {transactions.map((transaction) => (
+                                        <TableRow key={transaction.id} className="group hover:bg-gray-50/50 transition-colors">
+                                            {/* Mobile view - card style */}
+                                            <TableCell className="sm:hidden p-3" colSpan={6}>
+                                                <div className="flex flex-col space-y-2">
+                                                    <div className="flex justify-between items-center">
+                                                        <span className="font-medium text-sm truncate max-w-[150px]">{transaction.reference}</span>
+                                                        <Badge
+                                                            variant={
+                                                                transaction.status === 'success'
+                                                                    ? 'outline'
+                                                                    : transaction.status === 'failed'
+                                                                        ? 'destructive'
+                                                                        : 'default'
+                                                            }
+                                                            className="ml-2"
+                                                        >
+                                                            {transaction.status}
+                                                        </Badge>
+                                                    </div>
+                                                    <div className="flex justify-between items-center">
+                                                        <span className="text-muted-foreground text-sm">{format(transaction.created_at, 'MMM d, yyyy')}</span>
+                                                        <span className="font-semibold">{transaction.amount}</span>
+                                                    </div>
+                                                    <div className="flex justify-between items-center pt-1">
+                                                        {transaction.status === 'failed' && (
+                                                            <RetryButton transactionRef={transaction.reference} />
+                                                        )}
+                                                        {transaction.status !== 'failed' && <div></div>}
+                                                        <span className="text-xs text-muted-foreground">{format(transaction.created_at, 'h:mm a')}</span>
+                                                    </div>
+                                                </div>
+                                            </TableCell>
+
+                                            {/* Desktop view - table style */}
+                                            <TableCell className="hidden sm:table-cell font-medium">
+                                                <span className="truncate max-w-[120px] inline-block">{transaction.reference}</span>
+                                            </TableCell>
+                                            <TableCell className="hidden md:table-cell">
+                                                <span className="truncate max-w-[150px] inline-block">
+                                                    {transaction.description || "-"}
+                                                </span>
+                                            </TableCell>
+                                            <TableCell className="hidden sm:table-cell">
+                                                {transaction.amount}
+                                            </TableCell>
+                                            <TableCell className="hidden sm:table-cell">
                                                 <Badge
                                                     variant={
                                                         transaction.status === 'success'
@@ -110,81 +181,47 @@ export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                                                                 ? 'destructive'
                                                                 : 'default'
                                                     }
-                                                    className="ml-2"
                                                 >
                                                     {transaction.status}
                                                 </Badge>
-                                            </div>
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-muted-foreground text-sm">{format(transaction.created_at, 'MMM d, yyyy')}</span>
-                                                <span className="font-semibold">{transaction.amount}</span>
-                                            </div>
-                                            <div className="flex justify-between items-center pt-1">
+                                            </TableCell>
+                                            <TableCell className="hidden md:table-cell text-muted-foreground text-sm truncate">
+                                                {format(transaction.created_at, 'MMM d, yyyy h:mm a')}
+                                            </TableCell>
+                                            <TableCell className="hidden sm:table-cell text-right">
                                                 {transaction.status === 'failed' && (
                                                     <RetryButton transactionRef={transaction.reference} />
                                                 )}
-                                                {transaction.status !== 'failed' && <div></div>}
-                                                <span className="text-xs text-muted-foreground">{format(transaction.created_at, 'h:mm a')}</span>
-                                            </div>
-                                        </div>
-                                    </TableCell>
-                                    
-                                    {/* Desktop view - table style */}
-                                    <TableCell className="hidden sm:table-cell font-medium">
-                                        <span className="truncate max-w-[120px] inline-block">{transaction.reference}</span>
-                                    </TableCell>
-                                    <TableCell className="hidden md:table-cell">
-                                        <span className="truncate max-w-[150px] inline-block">
-                                            {transaction.description || "-"}
-                                        </span>
-                                    </TableCell>
-                                    <TableCell className="hidden sm:table-cell">
-                                        {transaction.amount}
-                                    </TableCell>
-                                    <TableCell className="hidden sm:table-cell">
-                                        <Badge
-                                            variant={
-                                                transaction.status === 'success'
-                                                    ? 'outline'
-                                                    : transaction.status === 'failed'
-                                                        ? 'destructive'
-                                                        : 'default'
-                                            }
-                                        >
-                                            {transaction.status}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell className="hidden md:table-cell text-muted-foreground text-sm truncate">
-                                        {format(transaction.created_at, 'MMM d, yyyy h:mm a')}
-                                    </TableCell>
-                                    <TableCell className="hidden sm:table-cell text-right">
-                                        {transaction.status === 'failed' && (
-                                            <RetryButton transactionRef={transaction.reference} />
-                                        )}
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </div>
-                {transactions.length === 0 && (
-                    <div className="text-center py-8">
-                        <p className="text-muted-foreground">No transactions found</p>
-                    </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
+
+                        {pagination && transactions.length > 0 && (
+                            <div className="mt-4">
+                                <TransactionPagination {...pagination} />
+                            </div>
+                        )}
+
+                        {showViewAllButton && transactions.length > 0 && (
+                            <div className="mt-4">
+                                <Link to="/transactions">
+                                    <Button variant="outline" size="sm" className="w-full text-xs sm:text-sm">
+                                        View All Transactions
+                                    </Button>
+                                </Link>
+                            </div>
+                        )}
+                    </>
                 )}
-                {showViewAllButton && transactions.length > 0 && (
-                    <div className="mt-4">
-                        <Link to="/transactions">
-                            <Button variant="outline" size="sm" className="w-full text-xs sm:text-sm">
-                                View All Transactions
-                            </Button>
-                        </Link>
-                    </div>
-                )}
+
             </GlassCard>
         </motion.div>
     );
 };
+
 
 const TransactionHistorySkeleton = () => {
     return (
