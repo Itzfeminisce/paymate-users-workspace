@@ -26,8 +26,8 @@ import ResetPassword from "./pages/ResetPassword";
 import AuthGuard from "./context/AuthGuard";
 import Contact from "./pages/Contact";
 import Referrals from "./pages/Referrals";
-import { usePlatformConfigQuery } from "./hooks/api-hooks";
 import { PlatformConfigProvider } from "./context/PlatformConfigContext";
+import Metadata from "./components/Metadata";
 
 const queryClient = new QueryClient();
 
@@ -48,29 +48,31 @@ const App = () => {
               <Sonner />
               <BrowserRouter>
                 <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/sign-in" element={<SignIn />} />
-                  <Route path="/sign-up" element={<SignUp />} />
-                  <Route path="/forgot-password" element={<ForgotPassword />} />
-                  <Route path="/reset-password" element={<ResetPassword />} />
-                  <Route path="/contact" element={<Contact />} />
+                  <Route element={<Metadata />}>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/sign-in" element={<SignIn />} />
+                    <Route path="/sign-up" element={<SignUp />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
+                    <Route path="/contact" element={<Contact />} />
 
-                  {/* Protected Routes - wrapped in AuthGuard */}
-                  <Route element={<AuthGuard />}>
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/settings" element={<Settings />} />
-                    <Route path="/transactions" element={<Transactions />} />
-                    <Route path="/payment-methods" element={<PaymentMethods />} />
-                    <Route path="/appearance" element={<Appearance />} />
-                    <Route path="/messages" element={<Messages />} />
-                    <Route path="/services" element={<Services />} />
-                    <Route path="/fund-wallet/:reference?" element={<FundWallet />} />
-                    <Route path="/referrals" element={<Referrals />} />
+                    {/* Protected Routes - wrapped in AuthGuard */}
+                    <Route element={<AuthGuard />}>
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/profile" element={<Profile />} />
+                      <Route path="/settings" element={<Settings />} />
+                      <Route path="/transactions" element={<Transactions />} />
+                      <Route path="/payment-methods" element={<PaymentMethods />} />
+                      <Route path="/appearance" element={<Appearance />} />
+                      <Route path="/messages" element={<Messages />} />
+                      <Route path="/services" element={<Services />} />
+                      <Route path="/fund-wallet/:reference?" element={<FundWallet />} />
+                      <Route path="/referrals" element={<Referrals />} />
+                    </Route>
+
+                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                    <Route path="*" element={<NotFound />} />
                   </Route>
-
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
                 </Routes>
               </BrowserRouter>
             </ThemeProvider>

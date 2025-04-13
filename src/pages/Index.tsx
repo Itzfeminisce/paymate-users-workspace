@@ -28,10 +28,10 @@ const pageTransition = {
 };
 
 const Index = () => {
-  
+
   const location = useLocation();
   const initialRender = useRef(true);
-  
+
 
 
   useEffect(() => {
@@ -92,7 +92,7 @@ const Index = () => {
         className="min-h-screen flex flex-col"
       >
         <Navbar />
-        
+
         <main className="flex-grow">
           <Hero />
           <Features />
@@ -100,9 +100,9 @@ const Index = () => {
           <Pricing />
           <FAQ />
         </main>
-        
+
         <Footer />
-        
+
         {/* Scroll to top button */}
         <ScrollToTopButton />
       </motion.div>
@@ -125,7 +125,7 @@ const ScrollToTopButton = () => {
     };
 
     window.addEventListener('scroll', toggleVisibility);
-    
+
     return () => window.removeEventListener('scroll', toggleVisibility);
   }, []);
 
@@ -164,6 +164,7 @@ const ScrollToTopButton = () => {
           </svg>
         </motion.button>
       )}
+      
     </AnimatePresence>
   );
 };

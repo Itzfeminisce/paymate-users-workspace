@@ -134,25 +134,4 @@ export const useApiError = () => {
     return { handleTransactionError };
   };
   
-  // Usage example:
-  /*
-  const { handleError } = useApiError();
-  const { handleTransactionError } = useTransactionError();
   
-  try {
-    await api.post('/transactions', data);
-  } catch (error) {
-    const errorResponse = handleTransactionError(error);
-    
-    // Handle specific error cases
-    switch (errorResponse.code) {
-      case ErrorCodes.INSUFFICIENT_FUNDS:
-        // Show add funds modal
-            break;
-      case ErrorCodes.TRANSACTION_VERIFICATION_FAILED:
-        // Show verification retry dialog
-            break;
-      // ... handle other cases
-    }
-  }
-  */

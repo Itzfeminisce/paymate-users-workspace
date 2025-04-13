@@ -29,8 +29,6 @@ export function PlatformConfigProvider({ children }: { children: ReactNode }) {
         return config.config
     }, [data])
 
-
-
     if (isLoading) {
         return (<SplashScreen appName={'PayMate'} description={'Giving better experience...'} />);
     }
@@ -44,7 +42,6 @@ export function PlatformConfigProvider({ children }: { children: ReactNode }) {
         )
     }
 
-
     const value = {
         config: data || null,
         isLoading,
@@ -52,8 +49,6 @@ export function PlatformConfigProvider({ children }: { children: ReactNode }) {
         getConfig,
         refetch
     };
-
-
 
     return (
         <PlatformConfigContext.Provider value={value}>
@@ -66,26 +61,81 @@ export default PlatformConfigContext;
 
 
 export const SplashScreen: React.FC<{ appName: string, description?: string }> = ({ appName, description }) => {
+    // 
+    // To use custom images for the splash screen:
+    // 1. Create a directory: public/splash-screen/
+    // 2. Add your images to this directory
+    // 3. Update the images array below with the paths to your images
+    //
+    const images = [
+        '01.webp',
+        '02.jpg',
+        '03.jpg',
+        '04.png',
+        '05.webp',
+        '06.jpg',
+    ];
+
     return (
-        <div className="fixed inset-0 flex flex-col items-center justify-center z-50 px-4 sm:px-6 from-slate-900 via-indigo-950 to-violet-900 bg-[url('/splash-pattern.svg')] bg-cover bg-center bg-blend-soft-light">
-            <div className="absolute inset-0 opacity-20">
-                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(101,163,255,0.3),transparent_70%)]"></div>
-                <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_bottom_left,rgba(255,101,209,0.3),transparent_70%)]"></div>
-            </div>
-            <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 mb-4 sm:mb-6 md:mb-8">
-                <div className="absolute inset-0 border-4 border-cyan-400/20 rounded-full"></div>
-                <div className="absolute inset-0 border-4 border-transparent border-t-cyan-400 rounded-full animate-spin"></div>
-                <div className="absolute overflow-hidden inset-0 border-4 border-transparent border-r-fuchsia-400/60 rounded-full animate-pulse">
-                    <img src='/og-image.png' className='w-full h-full' />
+        <div className="fixed inset-0 flex items-center justify-center z-50 overflow-hidden bg-gradient-to-br from-slate-900 to-indigo-950">
+            {/* Diagonal image arrangement */}
+            <div className="absolute inset-0 w-screen h-screen overflow-hidden">
+                <div className="relative w-full h-full">
+                    {images.map((img, index) => {
+                        // Calculate diagonal position from left to right
+                        const row = Math.floor(index / 1.5);
+                        const col = index % 3;
+                        const offsetX = col * 40.88;
+                        const offsetY = row * 40.88;
+                        
+                        // Position images diagonally from left to right
+                        const x = offsetX;
+                        const y = offsetY;
+                        
+                        return (
+                            <div 
+                                key={index}
+                                className="absolute overflow-hidden"
+                                style={{
+                                    left: `${x+30}%`,
+                                    top: `${y}%`,
+                                    transform: `translate(-50%, -50%) rotate(${index * 10}deg)`,
+                                    transition: 'all 0.5s ease',
+                                }}
+                            >
+                                <img 
+                                    src={`/splash-screen/${img}`} 
+                                    alt={`Splash image ${index + 1}`} 
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                        );
+                    })}
                 </div>
-                <div className="absolute inset-1/4 bg-cyan-400/10 rounded-full animate-pulse"></div>
             </div>
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 md:mb-3 text-center text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-fuchsia-500 animate-pulse">
-                {appName}
-            </h1>
-            <p className="text-black/80 text-sm sm:text-base md:text-lg text-center">
-                <span className="inline-block animate-bounce">✨</span> {description || "Preparing something amazing for you..."} <span className="inline-block animate-bounce delay-150">✨</span>
-            </p>
+            
+            {/* Darkened/blurred overlay */}
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+            
+            {/* Centered content */}
+            <div className="relative z-10 flex flex-col items-center justify-center p-8 text-center">
+                {/* App name with enhanced visibility */}
+                <h1 className="text-5xl md:text-6xl font-extrabold mb-4 text-white drop-shadow-lg">
+                    {appName}
+                </h1>
+                
+                {/* Description */}
+                <p className="text-xl md:text-2xl text-white/90 max-w-md font-medium">
+                    {description || "Preparing something amazing for you..."}
+                </p>
+                
+                {/* Simple loading indicator */}
+                <div className="mt-8 flex space-x-2">
+                    <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                    <div className="w-2 h-2 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                </div>
+            </div>
         </div>
     );
 };

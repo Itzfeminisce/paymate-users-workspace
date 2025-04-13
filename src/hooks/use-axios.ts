@@ -1,10 +1,7 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { toast, useToast } from '@/hooks/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { ENV } from '@/utils/env';
 import { handleAxiosError } from '@/utils/axios-error';
-import { redirect } from 'react-router-dom';
-import { useLocalStorage } from './use-local-storage';
-import { STORAGE_KEY } from '@/context/AuthContext';
 
 // Default config for axios instance
 const defaultConfig: AxiosRequestConfig = {
